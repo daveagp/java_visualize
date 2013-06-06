@@ -1,8 +1,9 @@
 java_visualize: visualization for java
 David Pritchard (daveagp@gmail.com), created May 2013
 
-This is a Java-flavoured frontend for Philip Guo's Python visualizer,
-https://github.com/pgbovine/OnlinePythonTutor (http://pythontutor.com)
+This is the frontend for a Java version of Philip Guo's Python visualizer.
+Try it at: 
+      http://cscircles.cemc.uwaterloo.ca/java-visualize/
 
 Whereas the OPT repo contains both a frontend and backend, the setup
 to make this work in Java consists of entirely replacing the backend,
