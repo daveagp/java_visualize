@@ -1,0 +1,46 @@
+java_visualize: visualization for java
+David Pritchard (daveagp@gmail.com), created May 2013
+
+This is a Java-flavoured frontend for Philip Guo's Python visualizer,
+https://github.com/pgbovine/OnlinePythonTutor (http://pythontutor.com)
+
+Whereas the OPT repo contains both a frontend and backend, the setup
+to make this work in Java consists of entirely replacing the backend,
+and then tweaking the frontend only where needed.
+
+What's inside this directory:
+ -- index.html is a modified version of visualize.html 
+ -- jv-frontend.js is a modified version of opt-frontend.js
+ -- java_safe_maketrace.php connects the frontend to the backend
+ -- example-code is a directory full of example Java files to visualize
+
+To get the frontend to work, in this directory, you need to:
+ -- replace ./OnlinePythonTutor with a symlink (or subrepo, etc)
+    to the code at https://github.com/pgbovine/OnlinePythonTutor/
+ -- replace ./CodeMirror3 with a symlink (or subrepo, etc)
+    to the code at https://github.com/marijnh/CodeMirror
+
+Note that in the entire frontend, only java_safe_maketrace.php is a file
+written in a server-side language. Everything else we use is static,
+although OnlinePythonTutor has some server-side files that this Java
+version does not use.
+
+For the backend to work the recommended way, you should do these
+optional but highly recommended steps
+ -- install CEMC safeexec on your system --  https://github.com/cemc/safeexec
+ -- install java_jail on your system -- https://github.com/daveagp/java_jail 
+ -- you have to be root to set these up
+ -- you don't want these backend packages in a folder accessible by http
+
+You will have to modify the file locations mentioned in java_safe_maketrace.php
+to reflect the installation location of your java_jail and safeexec (or 
+lack thereof if you are living dangerously).
+
+====
+
+The modified files (index.html, jv-frontend.js) retain the MIT license 
+under which they were published in the OnlinePythonTutor repo. 
+
+The other files (java_safe_maketrace.php, example-code/*) are released under 
+the GNU Affero General Public License, versions 3 or later. See LICENSE
+or visit: http://www.gnu.org/licenses/agpl.html
