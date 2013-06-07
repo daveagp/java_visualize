@@ -3,7 +3,7 @@ David Pritchard (daveagp@gmail.com), created May 2013
 
 This is the frontend for a Java version of Philip Guo's Python visualizer.
 Try it at: 
-      http://cscircles.cemc.uwaterloo.ca/java-visualize/
+      http://cscircles.cemc.uwaterloo.ca/java_visualize/
 
 Whereas the OPT repo contains both a frontend and backend, the setup
 to make this work in Java consists of entirely replacing the backend,
