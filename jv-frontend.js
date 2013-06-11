@@ -50,7 +50,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var python2_backend_script = 'exec';
 var python3_backend_script = null;
 
-var java_backend_script = './java_safe_maketrace.php';
+var java_backend_script = './java_safe_ram_maketrace.php';
 
 var appMode = 'edit'; // 'edit', 'display', or 'display_no_frills'
 
