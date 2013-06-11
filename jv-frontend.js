@@ -307,8 +307,6 @@ $(document).ready(function() {
 	return function() {$.get(url, setCodeMirrorVal); return false;};
     }
 
-    exampleCallback(examplesDir+"(Default).java")();
-
     String.prototype.endsWith = function(suffix) {
 	return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
@@ -565,7 +563,9 @@ $(document).ready(function() {
   }
   else {
     // select a canned example on start-up:
-    $("#aliasExampleLink").trigger('click');
+    exampleCallback(examplesDir+"(Default).java")();
+
+      //    $("#aliasExampleLink").trigger('click');
   }
 
   // parse query string options ...
