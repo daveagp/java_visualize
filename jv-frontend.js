@@ -178,9 +178,9 @@ $(document).ready(function() {
                      show_only_outputs: ($('#showOnlyOutputsSelector').val() == 'true')};
 
       $.get(backend_script,
-            {user_script : pyInputCodeMirror.getValue(),
+            {user_script : pyInputCodeMirror.getValue()/*,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
-             options_json: JSON.stringify(options)},
+             options_json: JSON.stringify(options)*/},
             function(dataFromBackend) {
                 console.log(dataFromBackend);
 
@@ -198,11 +198,12 @@ $(document).ready(function() {
                     pyInputCodeMirror.focus();
                     pyInputCodeMirror.setCursor(errorLineNo, 0);
                     var marked = pyInputCodeMirror.addLineClass(errorLineNo, null, 'errorLine');
-
-                      pyInputCodeMirror.setOption('onChange', function(marked) { return function() {
+                      console.log(marked);
+                      var hook = function(marked) { return function() {
                           pyInputCodeMirror.removeLineClass(marked, null, 'errorLine'); // reset line back to normal
-                          pyInputCodeMirror.setOption('onChange', null); // cancel
-                      };}(marked));
+                          pyInputCodeMirror.off('change', hook); // cancel
+                      }} (marked);
+                      pyInputCodeMirror.on('change', hook); 
                   }
 
                   alert(trace[0].exception_msg);
@@ -632,13 +633,15 @@ $(document).ready(function() {
 
   $('#genUrlBtn').bind('click', function() {
     var myArgs = {code: pyInputCodeMirror.getValue(),
-                  mode: appMode,
-                  cumulative: $('#cumulativeModeSelector').val(),
+                  mode: appMode
+                  /*
+                  , cumulative: $('#cumulativeModeSelector').val(),
                   heapPrimitives: $('#heapPrimitivesSelector').val(),
                   drawParentPointers: $('#drawParentPointerSelector').val(),
                   textReferences: $('#textualMemoryLabelsSelector').val(),
                   showOnlyOutputs: $('#showOnlyOutputsSelector').val(),
-                  py: $('#pythonVersionSelector').val()};
+                  py: $('#pythonVersionSelector').val()
+                  */};
 
     if (appMode == 'display') {
       myArgs.curInstr = myVisualizer.curInstr;
