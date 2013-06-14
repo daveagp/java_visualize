@@ -244,7 +244,10 @@ $(document).ready(function() {
                                                         executeCodeWithRawInputFunc: executeCodeWithRawInput,
                                                         //allowEditAnnotations: true,
                                                        });
-
+                  
+            $('#codeDisplayDiv').resizable({handles:"e"});
+            $('#pyCodeOutputDiv').css({"max-width":"inherit"});
+            $('#executionSlider').css({"width":"75%"});
 
                 // set keyboard bindings
                 $(document).keydown(function(k) {
