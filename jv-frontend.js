@@ -243,12 +243,9 @@ $(document).ready(function() {
                                                         showOnlyOutputs: ($('#showOnlyOutputsSelector').val() == 'true'),
                                                         executeCodeWithRawInputFunc: executeCodeWithRawInput,
                                                         //allowEditAnnotations: true,
+                                                        resizeLeftRight: true
                                                        });
                   
-            $('#codeDisplayDiv').resizable({handles:"e"});
-            $('#pyCodeOutputDiv').css({"max-width":"inherit"});
-            $('#executionSlider').css({"width":"75%"});
-
                 // set keyboard bindings
                 $(document).keydown(function(k) {
                   if (!keyStuckDown) {
