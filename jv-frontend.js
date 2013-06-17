@@ -249,7 +249,7 @@ $(document).ready(function() {
                   
                 // set keyboard bindings
                 $(document).keydown(function(k) {
-                  if (!keyStuckDown) {
+                  //if (!keyStuckDown) {
                     if (k.keyCode == 37) { // left arrow
                       if (myVisualizer.stepBack()) {
                         k.preventDefault(); // don't horizontally scroll the display
@@ -262,7 +262,7 @@ $(document).ready(function() {
                         keyStuckDown = true;
                       }
                     }
-                  }
+                  //}
                 });
 
                 $(document).keyup(function(k) {
