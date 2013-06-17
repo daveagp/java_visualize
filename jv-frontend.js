@@ -243,7 +243,8 @@ $(document).ready(function() {
                                                         showOnlyOutputs: ($('#showOnlyOutputsSelector').val() == 'true'),
                                                         executeCodeWithRawInputFunc: executeCodeWithRawInput,
                                                         //allowEditAnnotations: true,
-                                                        resizeLeftRight: true
+                                                        resizeLeftRight: true,
+                                                        highlightLines: true
                                                        });
                   
                 // set keyboard bindings
