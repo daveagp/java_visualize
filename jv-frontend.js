@@ -244,7 +244,8 @@ $(document).ready(function() {
                                                         executeCodeWithRawInputFunc: executeCodeWithRawInput,
                                                         //allowEditAnnotations: true,
                                                         resizeLeftRight: true,
-                                                        highlightLines: true
+                                                        highlightLines: true,
+                                                        lang: "java",
                                                        });
                   
                 // set keyboard bindings
