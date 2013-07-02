@@ -64,13 +64,13 @@ var myVisualizer = null; // singleton ExecutionVisualizer instance
 // set keyboard bindings
 $(document).keydown(function(k) {
   //if (!keyStuckDown) {
-  if (k.keyCode == 37) { // left arrow
+  if (k.keyCode == 37 && myVisualizer != null) { // left arrow
     if (myVisualizer.stepBack()) {
       k.preventDefault(); // don't horizontally scroll the display
       keyStuckDown = true;
     }
   }
-  else if (k.keyCode == 39) { // right arrow
+  else if (k.keyCode == 39 && myVisualizer != null) { // right arrow
     if (myVisualizer.stepForward()) {
       k.preventDefault(); // don't horizontally scroll the display
       keyStuckDown = true;
@@ -200,12 +200,14 @@ $(document).ready(function() {
                      heap_primitives: ($('#heapPrimitivesSelector').val() == 'true'),
                      show_only_outputs: ($('#showOnlyOutputsSelector').val() == 'true')};
 
-      $.get(backend_script,
-            {user_script : pyInputCodeMirror.getValue()/*,
+    $.ajax({url: backend_script,
+            data: {user_script : pyInputCodeMirror.getValue()/*,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
              options_json: JSON.stringify(options)*/},
-            function(dataFromBackend) {
-                console.log(dataFromBackend);
+            dataType: "json",
+            timeout: 10000, //ms
+            success: function(dataFromBackend) {
+              console.log(["Data from backend:", dataFromBackend]);
 
               var trace = dataFromBackend.trace;
 
@@ -277,8 +279,7 @@ $(document).ready(function() {
 
                 $.bbq.pushState({ mode: 'display' }, 2 /* completely override other hash strings to keep URL clean */);
               }
-            },
-            "json");
+            }});
   }
 
   function executeCodeFromScratch() {

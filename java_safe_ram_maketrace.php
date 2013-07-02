@@ -14,12 +14,14 @@ See README for documentation.
 
 
 // report an error which caused the code not to run
-function visError($msg, $row, $col, $code) {
+function visError($msg, $row, $col, $code, $se_stdout = null) {
   if (!is_int($col))
     $col = 0;
   return '{"trace":[{"line": '.$row.', "event": "uncaught_exception", '
     .'"offset": '.$col.', "exception_msg": '.json_encode($msg).'}],'
-    .'"code":'.json_encode($code).'}';
+    .'"code":'.json_encode($code) .
+    ($se_stdout === null ? '' : (',"se_stdout":'.json_encode($se_stdout)))
+    .'}';
 }
 
 // the main method
@@ -68,9 +70,14 @@ function maketrace() {
   $safeexec_retval = proc_close($process);
   
   if ($safeexec_retval === 0) //executed okay
-    return $se_stdout;
+    {
+      if ($se_stdout != "")
+        return $se_stdout;
+      else 
+        return visError("Internal error: safeexec returned 0, but an empty string.\nsafeexec stderr:\n" . $se_stderr, 0, 0, $user_code);
+    }
   else //this will gum up the javascript, but is convenient to see with browser debugging tools
-    return "safeexec did not succeed.\nsafeexec stderr:\n" . $se_stderr . "\nsafeexec stdout:\n" .$se_stdout;
+    return visError("Safeexec did not succeed:\n" . $se_stderr, 0, 0, $user_code, $se_stdout);
 }
 
 header("Content-type: text/plain; charset=utf-8");
