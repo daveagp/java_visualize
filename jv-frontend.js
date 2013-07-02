@@ -61,6 +61,29 @@ var rawInputLst = []; // a list of strings inputted by the user in response to r
 
 var myVisualizer = null; // singleton ExecutionVisualizer instance
 
+// set keyboard bindings
+$(document).keydown(function(k) {
+  //if (!keyStuckDown) {
+  if (k.keyCode == 37) { // left arrow
+    if (myVisualizer.stepBack()) {
+      k.preventDefault(); // don't horizontally scroll the display
+      keyStuckDown = true;
+    }
+  }
+  else if (k.keyCode == 39) { // right arrow
+    if (myVisualizer.stepForward()) {
+      k.preventDefault(); // don't horizontally scroll the display
+      keyStuckDown = true;
+    }
+  }
+  //}
+});
+
+$(document).keyup(function(k) {
+  keyStuckDown = false;
+});
+
+
 var keyStuckDown = false;
 
 function enterEditMode() {
@@ -248,28 +271,6 @@ $(document).ready(function() {
                                                         lang: "java",
                                                        });
                   
-                // set keyboard bindings
-                $(document).keydown(function(k) {
-                  //if (!keyStuckDown) {
-                    if (k.keyCode == 37) { // left arrow
-                      if (myVisualizer.stepBack()) {
-                        k.preventDefault(); // don't horizontally scroll the display
-                        keyStuckDown = true;
-                      }
-                    }
-                    else if (k.keyCode == 39) { // right arrow
-                      if (myVisualizer.stepForward()) {
-                        k.preventDefault(); // don't horizontally scroll the display
-                        keyStuckDown = true;
-                      }
-                    }
-                  //}
-                });
-
-                $(document).keyup(function(k) {
-                  keyStuckDown = false;
-                });
-
 
                 // also scroll to top to make the UI more usable on smaller monitors
                 $(document).scrollTop(0);
