@@ -46,7 +46,7 @@ function maketrace() {
   
   // clear out the environment variables in the safeexec call. 
   // note: -cp would override CLASSPATH if it were set
-  $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 3000000 --nfile 30 --clock 5 --exec /java/bin/java -cp $cp traceprinter.InMemory";
+  $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 500000 --nfile 30 --clock 5 --exec /java/bin/java -Xmx128M -cp $cp traceprinter.InMemory";
 
   $output = array();
   $return = -1;
