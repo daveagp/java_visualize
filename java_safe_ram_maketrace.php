@@ -30,7 +30,7 @@ function maketrace() {
     return visError("Error: http mangling? Could not find user_script variable.", 0, 0, "");
 
   $user_code = $_REQUEST['user_script'];
-  $user_stdin = $_REQUEST['user_stdin']; //stdin is not really supported yet for java
+  //$user_stdin = $_REQUEST['user_stdin']; //stdin is not really supported yet for java
   
   $descriptorspec = array
     (0 => array("pipe", "r"), 
