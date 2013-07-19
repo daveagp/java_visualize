@@ -206,6 +206,7 @@ $(document).ready(function() {
              options_json: JSON.stringify(options)*/},
             dataType: "json",
             timeout: 10000, //ms
+		error: ajaxErrorHandler,
             success: function(dataFromBackend) {
               console.log(["Data from backend:", dataFromBackend]);
 
@@ -316,10 +317,8 @@ $(document).ready(function() {
 	return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
 
-    $.ajax({
-	url: "./example-code/",
-	success: function(index_page) {
-	    $(index_page).find("td > a").each(function() {
+    var populateExamples = function(index_page) { 
+	$(index_page).find("td > a").each(function() {
 		var filename = $(this).attr("href");
 		if (filename.endsWith(".java")) { // skip link to ..
 		    if (exampleCount != 0) 
@@ -330,10 +329,16 @@ $(document).ready(function() {
 		    $("#examplesHolder").append(newItem);
 		}
 	    });
-	}
-    });	
-					      
+    };
 
+    $.ajax({
+	    url: "./example-code/",
+	    success: populateExamples,
+	    error: function() { $.ajax({
+			url: "./example-code/backup-listing.html", 
+			    success: populateExamples,
+			    error: ajaxErrorHandler}); }
+	});
 
 /*
   $("#tutorialExampleLink").click(function() {
@@ -620,12 +625,14 @@ $(document).ready(function() {
 
 
   // log a generic AJAX error handler
-  $(document).ajaxError(function() {
-    alert("Server error (possibly due to memory/resource overload). Report a bug to daveagp@gmail.com\n\n(Click the 'Generate URL' button to include a unique URL in your email bug report.)");
+  var ajaxErrorHandler = function() {
+      alert("Server error (possibly due to memory/resource overload). Report a bug to daveagp@gmail.com\n\n(Click the 'Generate URL' button to include a unique URL in your email bug report.)");
+      
+      $('#executeBtn').html("Visualize execution");
+      $('#executeBtn').attr('disabled', false);
+  };
 
-    $('#executeBtn').html("Visualize execution");
-    $('#executeBtn').attr('disabled', false);
-  });
+  //  $(document).ajaxError(ajaxErrorHandler);
 
 
   // redraw connector arrows on window resize
