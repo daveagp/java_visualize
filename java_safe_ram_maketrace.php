@@ -40,7 +40,7 @@ function maketrace() {
      );
 
   $safeexec = "../../safeexec/safeexec"; // an executable
-  $java_jail = "../../../java_jail/";    // a directory, with trailing slash
+  $java_jail = "../../../dev_java_jail/";    // a directory, with trailing slash
 
   $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar';
   
