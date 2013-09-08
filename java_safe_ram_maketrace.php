@@ -39,14 +39,18 @@ function maketrace() {
 //     3 => array("pipe", "r"),// stdin for visualized program
      );
 
-  $safeexec = "../../safeexec/safeexec"; // an executable
-  $java_jail = "../../../java_jail/";    // a directory, with trailing slash
+  $safeexec  = "/n/fs/htdocs/cos126/safeexec/safeexec"; // an executable
+  $java_jail = "/n/fs/htdocs/cos126/java_jail/";    // a directory, with trailing slash
+  $inc = "-i $safeexec -i /n/fs/htdocs/cos126/java_jail/cp -i /etc/alternatives/java_sdk_1.7.0/lib/tools.jar";
 
-  $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar';
+  $cp = 'cp/:cp/javax.json-1.0.jar:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
+
+  $java = '/etc/alternatives/java_sdk_1.7.0/bin/java';
   
   // clear out the environment variables in the safeexec call. 
   // note: -cp would override CLASSPATH if it were set
-  $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 500000 --nfile 30 --clock 5 --exec /java/bin/java -Xmx128M -cp $cp traceprinter.InMemory";
+  chdir($java_jail);
+  $command_execute = "sandbox $inc $safeexec --nproc 50 --mem 3000000 --nfile 30 --clock 5 --exec $java -Xmx400M -cp $cp traceprinter.InMemory";
 
   $output = array();
   $return = -1;
