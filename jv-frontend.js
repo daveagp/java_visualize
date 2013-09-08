@@ -115,8 +115,16 @@ $(document).ready(function() {
       matchBrackets: true,
     tabSize: 4,
     indentUnit: 4,
-    // convert tab into four spaces:
-    extraKeys: {Tab: function(cm) {cm.replaceSelection("    ", "end");}}
+    extraKeys: {
+      Tab: function(cm) {
+        var lo = cm.getCursor("start").line;
+        var hi = cm.getCursor("end").line;
+        for (var i = lo; i <= hi; i++)
+          cm.indentLine(i, "smart");
+        cm.setCursor(cm.getCursor("end"));
+        return true;
+      }
+    }
   });
 
 //    setCodeMirrorVal(
