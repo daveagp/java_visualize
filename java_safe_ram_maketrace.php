@@ -24,6 +24,16 @@ function visError($msg, $row, $col, $code, $se_stdout = null) {
     .'}';
 }
 
+function logit($user_code, $internal_error) {
+  require_once('.dbcfg.php');
+  $con = mysqli_connect(JV_HOST, JV_USER, JV_PWD, JV_DB);
+  $stmt = $con->prepare("INSERT INTO jv_history (user_code, internal_error) VALUES (?, " . ($internal_error?1:0).")");
+  $stmt->bind_param("s", $user_code);
+  $stmt->execute();
+  $stmt->close();
+}
+
+
 // the main method
 function maketrace() {  
   if (!array_key_exists('user_script', $_REQUEST))
@@ -31,6 +41,9 @@ function maketrace() {
 
   $user_code = $_REQUEST['user_script'];
   //$user_stdin = $_REQUEST['user_stdin']; //stdin is not really supported yet for java
+  if (strlen($user_code) > 5000)
+    return visError("Too much code!");
+
   
   $descriptorspec = array
     (0 => array("pipe", "r"), 
@@ -40,7 +53,7 @@ function maketrace() {
      );
 
   $safeexec = "../../safeexec/safeexec"; // an executable
-  $java_jail = "../../../java_jail/";    // a directory, with trailing slash
+  $java_jail = "../../../dev_java_jail/";    // a directory, with trailing slash
 
   $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar';
   
@@ -68,16 +81,20 @@ function maketrace() {
   fclose($pipes[2]);
   
   $safeexec_retval = proc_close($process);
-  
-  if ($safeexec_retval === 0) //executed okay
-    {
-      if ($se_stdout != "")
-        return $se_stdout;
-      else 
-        return visError("Internal error: safeexec returned 0, but an empty string.\nsafeexec stderr:\n" . $se_stderr, 0, 0, $user_code);
-    }
-  else //this will gum up the javascript, but is convenient to see with browser debugging tools
-    return visError("Safeexec did not succeed:\n" . $se_stderr, 0, 0, $user_code, $se_stdout);
+
+  if ($safeexec_retval === 0 && $se_stdout != "") {  //executed okay
+    logit($user_code, false);
+    return $se_stdout;
+  }
+
+  // there was an error
+  logit($user_code, true);
+
+  if ($safeexec_retval === 0)
+    return visError("Internal error: safeexec returned 0, but an empty string.\nsafeexec stderr:\n" . $se_stderr, 0, 0, $user_code);
+
+  //this will gum up the javascript, but is convenient to see with browser debugging tools
+  return visError("Safeexec did not succeed:\n" . $se_stderr, 0, 0, $user_code, $se_stdout);
 }
 
 header("Content-type: text/plain; charset=utf-8");
