@@ -595,11 +595,11 @@ $(document).ready(function() {
   // parse query string options ...
   // ugh, ugly tristate due to the possibility of them being undefined
 
-  if ($.bbq.getState('showStringsAsValues')) {
+  if (typeof $.bbq.getState('showStringsAsValues') !== "undefined") {
     $('#showStringsAsValues').prop('checked', true);
     $('#options').show();
   }
-  if ($.bbq.getState('showAllFields')) {
+  if (typeof $.bbq.getState('showAllFields') !== "undefined") {
     $('#showAllFields').prop('checked', true);
     $('#options').show();
   }
@@ -651,10 +651,12 @@ $(document).ready(function() {
                   showOnlyOutputs: $('#showOnlyOutputsSelector').val(),
                   py: $('#pythonVersionSelector').val()
                   */};
+
+    // the presence of the key is used, the value is not used
     if ($('#showStringsAsValues').is(':checked'))
-      myArgs.showStringsAsValues=true;
+      myArgs.showStringsAsValues='';
     if ($('#showAllFields').is(':checked'))
-      myArgs.showAllFields=true;
+      myArgs.showAllFields='';
 
     if (appMode == 'display') {
       myArgs.curInstr = myVisualizer.curInstr;
