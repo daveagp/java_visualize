@@ -595,10 +595,14 @@ $(document).ready(function() {
   // parse query string options ...
   // ugh, ugly tristate due to the possibility of them being undefined
 
-  $('#showAllFields').prop('checked', 
-                           $.bbq.getState('showAllFields')==='true');
-  $('#showStringsAsValues').prop('checked', 
-                                 $.bbq.getState('showStringsAsValues')==='true');
+  if ($.bbq.getState('showStringsAsValues')) {
+    $('#showStringsAsValues').prop('checked', true);
+    $('#options').show();
+  }
+  if ($.bbq.getState('showAllFields')) {
+    $('#showAllFields').prop('checked', true);
+    $('#options').show();
+  }
 
   appMode = $.bbq.getState('mode'); // assign this to the GLOBAL appMode
   if ((appMode == "display") && preseededCode /* jump to display only with pre-seeded code */) {
