@@ -648,7 +648,7 @@ $(document).ready(function() {
                   py: $('#pythonVersionSelector').val()
                   */};
     if ($('#showStringsAsValues').is(':checked'))
-      myArgs.showStringAsValues=true;
+      myArgs.showStringsAsValues=true;
     if ($('#showAllFields').is(':checked'))
       myArgs.showAllFields=true;
 
