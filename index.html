@@ -89,6 +89,21 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <div id="codeInputPane">
 </div> <!-- populate with a CodeMirror instance -->
 
+<div>
+<button onclick="$('#options').toggle()">Show/hide options</button>
+<span id='options' style='display:none'>
+<input id='showStringsAsValues' type='checkbox'>
+<label for='showStringsAsValues'>
+Just show String values, not identities
+</label>
+<input id='showAllFields' type='checkbox'>
+<label for='showAllFields'>
+Show overridden fields
+</label>
+</input>
+</span>
+</div>
+
 <!--
 <p style="margin-top: 10px; line-height: 200%;">
 Execute code using

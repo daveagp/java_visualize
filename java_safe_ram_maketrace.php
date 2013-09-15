@@ -36,15 +36,27 @@ function logit($user_code, $internal_error) {
 
 // the main method
 function maketrace() {  
-  if (!array_key_exists('user_script', $_REQUEST))
-    return visError("Error: http mangling? Could not find user_script variable.", 0, 0, "");
+  if (!array_key_exists('data', $_REQUEST))
+    return visError("Error: http mangling? Could not find data variable.", 0, 0, "");
 
-  $user_code = $_REQUEST['user_script'];
+  $data = $_REQUEST['data'];
   //$user_stdin = $_REQUEST['user_stdin']; //stdin is not really supported yet for java
-  if (strlen($user_code) > 5000)
+  if (strlen($data) > 5000)
     return visError("Too much code!");
-
   
+  $data = json_decode($data, true); // get assoc. arrays, not objects
+  
+  $user_code = $data['user_script'];
+
+  $options = $data['options'];
+  // sanitize options
+  foreach ($options as $k => $v) {
+    if ($k == "showStringsAsValues" || $k == "showAllFields") {
+      $options[$k] = $options[$k] ? true : false;
+    }
+    else unset($options[$k]);
+  }
+
   $descriptorspec = array
     (0 => array("pipe", "r"), 
      1 => array("pipe", "w"),// stdout
@@ -72,7 +84,10 @@ nMemory";
   }
   else {
     $safeexec = "../../safeexec/safeexec"; // an executable
-    $java_jail = "../../../java_jail/";    // a directory, with trailing slash
+    if (substr($_SERVER['REQUEST_URI'], 0, 5)=='/dev/')
+      $java_jail = "../../../dev_java_jail/";    // a directory, with trailing slash
+    else
+      $java_jail = "../../../java_jail/";    // a directory, with trailing slash
     $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar';
     $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 500000 --nfile 30 --clock 5 --exec /java/bin/java -Xmx128M -cp $cp traceprinter.InMemory";
   }
@@ -83,8 +98,11 @@ nMemory";
   $process = proc_open($command_execute, $descriptorspec, $pipes); //cwd, env not needed
   
   if (!is_resource($process)) return FALSE;
+
+  $data_to_send = json_encode(array("usercode"=>$user_code, 
+                                    "options"=>$options));
   
-  fwrite($pipes[0], $user_code);
+  fwrite($pipes[0], $data_to_send);
   fclose($pipes[0]);
   
   //  fwrite($pipes[3], $user_stdin);

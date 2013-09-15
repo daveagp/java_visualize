@@ -113,8 +113,8 @@ $(document).ready(function() {
     mode: 'text/x-java',
     lineNumbers: true,
       matchBrackets: true,
-    tabSize: 4,
-    indentUnit: 4,
+    tabSize: 3,
+    indentUnit: 3,
     extraKeys: {
       Tab: function(cm) {
         var lo = cm.getCursor("start").line;
@@ -208,10 +208,16 @@ $(document).ready(function() {
                      heap_primitives: ($('#heapPrimitivesSelector').val() == 'true'),
                      show_only_outputs: ($('#showOnlyOutputsSelector').val() == 'true')};
 
+    var java_options = {};
+    java_options.showStringsAsValues =$('#showStringsAsValues').is(':checked');
+    java_options.showAllFields = $('#showAllFields').is(':checked');
     $.ajax({url: backend_script,
-            data: {user_script : pyInputCodeMirror.getValue()/*,
+            data: {data : JSON.stringify({
+              user_script : pyInputCodeMirror.getValue(),
+              options: java_options})},
+           /*,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
-             options_json: JSON.stringify(options)*/},
+             options_json: JSON.stringify(options)*/
             dataType: "json",
             timeout: 10000, //ms
 		error: ajaxErrorHandler,
@@ -588,31 +594,11 @@ $(document).ready(function() {
 
   // parse query string options ...
   // ugh, ugly tristate due to the possibility of them being undefined
-  var cumulativeState = $.bbq.getState('cumulative');
-  if (cumulativeState !== undefined) {
-    $('#cumulativeModeSelector').val(cumulativeState);
-  }
-  var heapPrimitivesState = $.bbq.getState('heapPrimitives');
-  if (heapPrimitivesState !== undefined) {
-    $('#heapPrimitivesSelector').val(heapPrimitivesState);
-  }
-  var drawParentPointerState = $.bbq.getState('drawParentPointers');
-  if (drawParentPointerState !== undefined) {
-    $('#drawParentPointerSelector').val(drawParentPointerState);
-  }
-  var textRefsState = $.bbq.getState('textReferences');
-  if (textRefsState !== undefined) {
-    $('#textualMemoryLabelsSelector').val(textRefsState);
-  }
-  var showOnlyOutputsState = $.bbq.getState('showOnlyOutputs');
-  if (showOnlyOutputsState !== undefined) {
-    $('#showOnlyOutputsSelector').val(showOnlyOutputsState);
-  }
 
-  var pyState = $.bbq.getState('py');
-  if (pyState !== undefined) {
-    $('#pythonVersionSelector').val(pyState);
-  }
+  $('#showAllFields').prop('checked', 
+                           $.bbq.getState('showAllFields')==='true');
+  $('#showStringsAsValues').prop('checked', 
+                                 $.bbq.getState('showStringsAsValues')==='true');
 
   appMode = $.bbq.getState('mode'); // assign this to the GLOBAL appMode
   if ((appMode == "display") && preseededCode /* jump to display only with pre-seeded code */) {
@@ -652,7 +638,7 @@ $(document).ready(function() {
 
   $('#genUrlBtn').bind('click', function() {
     var myArgs = {code: pyInputCodeMirror.getValue(),
-                  mode: appMode
+                  mode: appMode                  
                   /*
                   , cumulative: $('#cumulativeModeSelector').val(),
                   heapPrimitives: $('#heapPrimitivesSelector').val(),
@@ -661,6 +647,10 @@ $(document).ready(function() {
                   showOnlyOutputs: $('#showOnlyOutputsSelector').val(),
                   py: $('#pythonVersionSelector').val()
                   */};
+    if ($('#showStringsAsValues').is(':checked'))
+      myArgs.showStringAsValues=true;
+    if ($('#showAllFields').is(':checked'))
+      myArgs.showAllFields=true;
 
     if (appMode == 'display') {
       myArgs.curInstr = myVisualizer.curInstr;
