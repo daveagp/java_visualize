@@ -212,7 +212,7 @@ $(document).ready(function() {
                      show_only_outputs: ($('#showOnlyOutputsSelector').val() == 'true')};
 
     var java_options = {};
-    java_options.showStringsAsValues =$('#showStringsAsValues').is(':checked');
+    java_options.showStringsAsValues = !$('#showStringsAsObjects').is(':checked');
     java_options.showAllFields = $('#showAllFields').is(':checked');
     $.ajax({url: backend_script,
             data: {data : JSON.stringify({
@@ -606,8 +606,8 @@ $(document).ready(function() {
   // parse query string options ...
   // ugh, ugly tristate due to the possibility of them being undefined
 
-  if (typeof $.bbq.getState('showStringsAsValues') !== "undefined") {
-    $('#showStringsAsValues').prop('checked', true);
+  if (typeof $.bbq.getState('showStringsAsObjects') !== "undefined") {
+    $('#showStringsAsObjects').prop('checked', true);
     $('#options').show();
   }
   if (typeof $.bbq.getState('showAllFields') !== "undefined") {
@@ -664,8 +664,8 @@ $(document).ready(function() {
                   */};
 
     // the presence of the key is used, the value is not used
-    if ($('#showStringsAsValues').is(':checked'))
-      myArgs.showStringsAsValues='';
+    if ($('#showStringsAsObjects').is(':checked'))
+      myArgs.showStringsAsObjects='';
     if ($('#showAllFields').is(':checked'))
       myArgs.showAllFields='';
 

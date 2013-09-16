@@ -71,7 +71,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <script type="text/javascript" src="./CodeMirror3/mode/clike/clike.js"></script>
 <script type="text/javascript" src="./CodeMirror3/addon/edit/matchbrackets.js"></script>
 
-<script type="text/javascript" src="./jv-frontend.js?1"></script> <!-- used to be opt-frontend.js -->
+<script type="text/javascript" src="./jv-frontend.js?2"></script> <!-- used to be opt-frontend.js -->
 <link rel="stylesheet" href="./OnlinePythonTutor/v3/css/opt-frontend.css"/>
 
 </head>
@@ -92,9 +92,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <div>
 <button onclick="$('#options').toggle()">Show/hide options</button>
 <span id='options' style='display:none'>
-<input id='showStringsAsValues' type='checkbox'>
-<label for='showStringsAsValues'>
-Just show String values, not identities
+<input id='showStringsAsObjects' type='checkbox'>
+<label for='showStringsAsObjects'>
+Show String objects, not just values
 </label>
 <input id='showAllFields' type='checkbox'>
 <label for='showAllFields'>
