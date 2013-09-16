@@ -60,7 +60,7 @@ function maketrace() {
   $args = $data['args'];
   if (!is_array($args)) 
     return visError("args is not an array");
-  if (array_keys($args) !== range(0, count($args) - 1)) 
+  if (count($args)>0 && array_keys($args) !== range(0, count($args) - 1)) 
     return visError("wrong args format");
   for ($i=0; $i<count($args); $i++) 
     if (!is_string($args[$i]))
@@ -87,8 +87,7 @@ function maketrace() {
     // clear out the environment variables in the safeexec call.
     // note: -cp would override CLASSPATH if it were set
     chdir($java_jail);
-    $command_execute = "sandbox $inc $safeexec --nproc 50 --mem 3000000 --nfile 30 --clock 5 --exec $java -Xmx400M -cp $cp traceprinter.I\
-nMemory";
+    $command_execute = "sandbox $inc $safeexec --nproc 500 --mem 3000000 --nfile 30 --clock 5 --exec $java -Xmx400M -cp $cp traceprinter.InMemory";
 
   }
   else {
