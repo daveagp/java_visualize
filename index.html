@@ -71,7 +71,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <script type="text/javascript" src="./CodeMirror3/mode/clike/clike.js"></script>
 <script type="text/javascript" src="./CodeMirror3/addon/edit/matchbrackets.js"></script>
 
-<script type="text/javascript" src="./jv-frontend.js"></script> <!-- used to be opt-frontend.js -->
+<script type="text/javascript" src="./jv-frontend.js?1"></script> <!-- used to be opt-frontend.js -->
 <link rel="stylesheet" href="./OnlinePythonTutor/v3/css/opt-frontend.css"/>
 
 </head>
@@ -103,6 +103,45 @@ Show overridden fields
 </input>
 </span>
 </div>
+
+<div id='args'>
+<cmd>args</cmd>: <span id='argslist'></span>
+<button id='addarg' onclick='javascript:addArg("")'>add command-line argument</button>
+</div>
+
+
+<style>
+.arg {
+margin-right: 1px; 
+padding: 5px 3px; 
+border:1px solid #DDD;
+background-color: #EEE;
+border-radius: 5px;
+-webkit-border-radius: 5px;
+}
+.arg input {
+ width: 50px
+}
+.closex {
+font-weight:bold;
+position:relative;
+top:-4px;
+left:2px;
+text-decoration:none;
+color:red;
+cursor:pointer;
+}
+</style>
+
+<script type='text/javascript'>
+addArg = function(init) {
+  $('#argslist').append('<span class="arg"><input type="text"></input><sup class="closex">x</sup></span>');
+  $('#argslist .arg:last-child input').val(init);
+};
+$('#args').on('click', '.closex', function(event) {
+  $(this).parents('span.arg').remove();
+});
+</script>
 
 <!--
 <p style="margin-top: 10px; line-height: 200%;">

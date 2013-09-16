@@ -56,6 +56,15 @@ function maketrace() {
     }
     else unset($options[$k]);
   }
+  
+  $args = $data['args'];
+  if (!is_array($args)) 
+    return visError("args is not an array");
+  if (array_keys($args) !== range(0, count($args) - 1)) 
+    return visError("wrong args format");
+  for ($i=0; $i<count($args); $i++) 
+    if (!is_string($args[$i]))
+      return visError("wrong arg " + $i + " format");
 
   $descriptorspec = array
     (0 => array("pipe", "r"), 
@@ -100,7 +109,8 @@ nMemory";
   if (!is_resource($process)) return FALSE;
 
   $data_to_send = json_encode(array("usercode"=>$user_code, 
-                                    "options"=>$options));
+                                    "options"=>$options,
+                                    "args"=>$args));
   
   fwrite($pipes[0], $data_to_send);
   fclose($pipes[0]);

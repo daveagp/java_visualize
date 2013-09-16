@@ -104,6 +104,9 @@ function setCodeMirrorVal(dat) {
   $(document).scrollTop(0);
 }
 
+function getUserArgs() {
+  return $.map($('#argslist .arg input'), function(e){return e.value;});
+}
 
 $(document).ready(function() {
 
@@ -214,7 +217,8 @@ $(document).ready(function() {
     $.ajax({url: backend_script,
             data: {data : JSON.stringify({
               user_script : pyInputCodeMirror.getValue(),
-              options: java_options})},
+              options: java_options,
+              args: getUserArgs()})},
            /*,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
              options_json: JSON.stringify(options)*/
@@ -592,6 +596,13 @@ $(document).ready(function() {
       //    $("#aliasExampleLink").trigger('click');
   }
 
+  userArgs = $.bbq.getState('args'); 
+  if (userArgs) {
+    var args_a = JSON.parse(userArgs);
+    for (var i=0; i<args_a.length; i++)
+      addArg(args_a[i]);
+  }
+
   // parse query string options ...
   // ugh, ugly tristate due to the possibility of them being undefined
 
@@ -657,6 +668,9 @@ $(document).ready(function() {
       myArgs.showStringsAsValues='';
     if ($('#showAllFields').is(':checked'))
       myArgs.showAllFields='';
+
+    if (getUserArgs().length > 0)
+      myArgs.args = JSON.stringify(getUserArgs());
 
     if (appMode == 'display') {
       myArgs.curInstr = myVisualizer.curInstr;
