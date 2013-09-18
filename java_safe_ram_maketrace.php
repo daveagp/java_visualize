@@ -80,7 +80,7 @@ function maketrace() {
     $java_jail = "/n/fs/htdocs/cos126/java_jail/";    // a directory, with trailing slash
     $inc = "-i $safeexec -i /n/fs/htdocs/cos126/java_jail/cp -i /etc/alternatives/java_sdk_1.7.0/lib/tools.jar";
     
-    $cp = 'cp/:cp/javax.json-1.0.jar:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
+    $cp = 'cp/:cp/javax.json-1.0.jar:cp/stdlib.jar:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
     
     $java = '/etc/alternatives/java_sdk_1.7.0/bin/java';
     
@@ -96,7 +96,7 @@ function maketrace() {
       $java_jail = "../../../dev_java_jail/";    // a directory, with trailing slash
     else
       $java_jail = "../../../java_jail/";    // a directory, with trailing slash
-    $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar';
+    $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib.jar';
     $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 500000 --nfile 30 --clock 5 --exec /java/bin/java -Xmx128M -cp $cp traceprinter.InMemory";
   }
 
