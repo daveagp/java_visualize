@@ -66,6 +66,10 @@ function maketrace() {
     if (!is_string($args[$i]))
       return visError("wrong arg " + $i + " format");
 
+  $stdin = $data['stdin'];
+  if ($stdin != null && !is_string($stdin)) 
+    return visError("wrong stdin format");
+
   $descriptorspec = array
     (0 => array("pipe", "r"), 
      1 => array("pipe", "w"),// stdout
@@ -80,7 +84,7 @@ function maketrace() {
     $java_jail = "/n/fs/htdocs/cos126/java_jail/";    // a directory, with trailing slash
     $inc = "-i $safeexec -i /n/fs/htdocs/cos126/java_jail/cp -i /etc/alternatives/java_sdk_1.7.0/lib/tools.jar";
     
-    $cp = 'cp/:cp/javax.json-1.0.jar:cp/stdlib.jar:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
+    $cp = 'cp/:cp/javax.json-1.0.jar:cp/stdlib:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
     
     $java = '/etc/alternatives/java_sdk_1.7.0/bin/java';
     
@@ -96,7 +100,7 @@ function maketrace() {
       $java_jail = "../../../dev_java_jail/";    // a directory, with trailing slash
     else
       $java_jail = "../../../java_jail/";    // a directory, with trailing slash
-    $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib.jar';
+    $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib';
     $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 500000 --nfile 30 --clock 5 --exec /java/bin/java -Xmx128M -cp $cp traceprinter.InMemory";
   }
 
@@ -109,7 +113,8 @@ function maketrace() {
 
   $data_to_send = json_encode(array("usercode"=>$user_code, 
                                     "options"=>$options,
-                                    "args"=>$args));
+                                    "args"=>$args,
+                                    "stdin"=>$stdin));
   
   fwrite($pipes[0], $data_to_send);
   fclose($pipes[0]);

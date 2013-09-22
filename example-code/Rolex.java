@@ -1,7 +1,7 @@
-public class Stopwatch {    
+public class Rolex {    
     private final long start;
         
-    public Stopwatch() {
+    public Rolex() {
         start = System.currentTimeMillis();
     } 
     
@@ -12,11 +12,11 @@ public class Stopwatch {
     } 
         
     public static void main(String[] args) {
-        Stopwatch watchOne = new Stopwatch();
+        Rolex watchOne = new Rolex();
         // waste time so it is large enough to be measurable
         try {Thread.sleep(500);} catch (InterruptedException e) {}
         
-        Stopwatch watchTwo = new Stopwatch(); 
+        Rolex watchTwo = new Rolex(); 
         // waste time so it is large enough to be measurable
         try {Thread.sleep(500);} catch (InterruptedException e) {}
 
@@ -24,7 +24,7 @@ public class Stopwatch {
         System.out.println("watchOne " + watchOne.elapsedTime());
         System.out.println("watchTwo " + watchTwo.elapsedTime());
         
-        Stopwatch watchTmp = watchOne;
+        Rolex watchTmp = watchOne;
         watchOne = watchTwo;
         watchTwo = watchTmp; 
         

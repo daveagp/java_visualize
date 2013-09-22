@@ -90,7 +90,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 </div> <!-- populate with a CodeMirror instance -->
 
 <div>
-<button onclick="$('#options').toggle()">Show/hide options</button>
+<button onclick="$('#options').toggle()">options</button>
 <span id='options' style='display:none'>
 <input id='showStringsAsObjects' type='checkbox'>
 <label for='showStringsAsObjects'>
@@ -105,13 +105,25 @@ Show overridden fields
 </div>
 
 <div id='args'>
-<cmd>args</cmd>: <span id='argslist'></span>
-<button id='addarg' onclick='javascript:addArg("")'>add command-line argument</button>
+<code>args</code>: <span id='argslist'></span>
+<button id='addarg' onclick='javascript:addArg("")'>+command-line argument</button>
 </div>
 
+<div id='stdin'>
+<button id='stdin-button' onclick='$("#stdin-xdiv").toggle()'>stdin</button>
+(also visualizes consumption of <a href="http://introcs.cs.princeton.edu/java/stdlib/"><code>StdIn</code></a>)
+<div id='stdin-xdiv' style='display:none;position:relative'>
+<textarea id='stdinarea' style='-webkit-box-sizing: border-box;width:100%;height:100px;font-family:monospace'>
+</textarea>
+<sup style='position:absolute;top:5px;right:5px' class='closestdin' onclick='$("#stdin-xdiv").toggle()'>x</sup>
+</div>
+</div>
 
 <style>
-.arg {
+button {
+font-family: verdana, arial, helvetica, sans-serif;
+}
+.arg, #stdin-xdiv {
 margin-right: 1px; 
 padding: 5px 3px; 
 border:1px solid #DDD;
@@ -127,6 +139,12 @@ font-weight:bold;
 position:relative;
 top:-4px;
 left:2px;
+text-decoration:none;
+color:red;
+cursor:pointer;
+}
+.closestdin {
+font-weight:bold;
 text-decoration:none;
 color:red;
 cursor:pointer;
@@ -263,6 +281,7 @@ Execute code using
 <a id="nonlocalLink" href="#">nonlocal</a>
 </p>
 -->
+<div>The visualizer supports <code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdIn.html">StdIn</a></code>, <code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdOut.html">StdOut</a></code> and the other libraries <a href="http://introcs.cs.princeton.edu/java/stdlib">here</a>.</div>
 </div>
 
 

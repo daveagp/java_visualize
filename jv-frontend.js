@@ -108,6 +108,13 @@ function getUserArgs() {
   return $.map($('#argslist .arg input'), function(e){return e.value;});
 }
 
+function getUserStdin() {
+  if ($("#stdin-xdiv").is(":visible"))
+    return window.stdinarea.value;
+  else
+    return "";
+}
+
 $(document).ready(function() {
 
   $("#embedLinkDiv").hide();
@@ -218,7 +225,8 @@ $(document).ready(function() {
             data: {data : JSON.stringify({
               user_script : pyInputCodeMirror.getValue(),
               options: java_options,
-              args: getUserArgs()})},
+              args: getUserArgs(),
+              stdin: getUserStdin()})},
            /*,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
              options_json: JSON.stringify(options)*/
@@ -290,6 +298,7 @@ $(document).ready(function() {
                                                         resizeLeftRight: true,
                                                         highlightLines: true,
                                                         lang: "java",
+                                                        stdin: getUserStdin()
                                                        });
                   
 
@@ -596,11 +605,17 @@ $(document).ready(function() {
       //    $("#aliasExampleLink").trigger('click');
   }
 
-  userArgs = $.bbq.getState('args'); 
+  var userArgs = $.bbq.getState('args'); 
   if (userArgs) {
     var args_a = JSON.parse(userArgs);
     for (var i=0; i<args_a.length; i++)
       addArg(args_a[i]);
+  }
+
+  var userStdin = $.bbq.getState('stdin'); 
+  if (userStdin) {
+    $('#stdin-xdiv').show();
+    $('#stdinarea').val(userStdin);
   }
 
   // parse query string options ...
@@ -671,6 +686,9 @@ $(document).ready(function() {
 
     if (getUserArgs().length > 0)
       myArgs.args = JSON.stringify(getUserArgs());
+
+    if (getUserStdin().length > 0)
+      myArgs.stdin = getUserStdin();
 
     if (appMode == 'display') {
       myArgs.curInstr = myVisualizer.curInstr;
