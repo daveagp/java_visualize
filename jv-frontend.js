@@ -133,7 +133,8 @@ $(document).ready(function() {
           cm.indentLine(i, "smart");
         cm.setCursor(cm.getCursor("end"));
         return true;
-      }
+              },
+      F5 : function() {return false;}
     }
   });
 
