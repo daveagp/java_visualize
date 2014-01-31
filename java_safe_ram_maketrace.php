@@ -41,7 +41,7 @@ function maketrace() {
 
   $data = $_REQUEST['data'];
   //$user_stdin = $_REQUEST['user_stdin']; //stdin is not really supported yet for java
-  if (strlen($data) > 5000)
+  if (strlen($data) > 10000)
     return visError("Too much code!");
   
   $data = json_decode($data, true); // get assoc. arrays, not objects

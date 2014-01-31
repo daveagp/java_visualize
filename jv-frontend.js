@@ -606,6 +606,13 @@ $(document).ready(function() {
       //    $("#aliasExampleLink").trigger('click');
   }
 
+  var loadExample = $.bbq.getState('sampleFile');
+  if (loadExample) {
+      console.log(loadExample);
+      if (loadExample.match(/[a-zA-Z]+/))
+    exampleCallback(examplesDir+loadExample+".java")();
+  }
+
   var userArgs = $.bbq.getState('args'); 
   if (userArgs) {
     var args_a = JSON.parse(userArgs);
