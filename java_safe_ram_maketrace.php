@@ -12,30 +12,60 @@ See README for documentation.
 
 ******************************************************************************/
 
-// point this at wherever you installed the executable from 
+global $safeexec, $safeexec_args, $java_in_jail, $java_args; 
+
+// point this at the excutable you built from
 // https://github.com/cemc/safeexec
+$safeexec = "../../safeexec/safeexec";   // EDIT THIS
+
+$safeexec_args = array(
+  // point this at wherever you installed and configured
+  // https://github.com/daveagp/java_jail
+  "chroot_dir" => "../../java_jail/",    // EDIT THIS
+
+  // you may choose to tweak these important performance parameters
+  "clock" => "15",    // up to 15s of wall time
+  "cpu" => "10",      // up to 10s of cpu time
+  "mem" => "1000000", // use up to 1000000k ~ 1g of memory (YMMV)
+                      // counting both VMs and all overhead
+                      // see java_jail/cp/traceprinter/MEMORY-NOTES
+
+  // on almost all machines you should not need to edit anything below in this file
+
+  "exec_dir" => "/",  // execute in root of chroot
+  "env_vars" => "''", // no env vars
+  "nproc" => "50",    // max 50 processes
+  "nfile" => "30",    // up to 30 file handles
+);
+
+// the next two definitions assume things are set up like
+// https://github.com/daveagp/java_jail 
+$java_in_jail = '/java/bin/java';
+$java_args = array(
+  "Xmx128M" => "", // 128 mb per VM
+  "cp" =>      '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib'
+);
+
+// this is to override the definitions above in a git-friendly way
+if (file_exists('.cfg.php')) 
+  require_once('.cfg.php');
+
+/* e.g. my .cfg.php looks like this:
+<?php
+global $safeexec, $safeexec_args;
 $safeexec = "../safeexec/safeexec";  
-
-// point this at wherever you installed
-// https://github.com/daveagp/java_jail
-$java_jail = "../java_jail/";        
-
-// memory limit in kilobytes, read on below
-$memlimit_k = 1000000;
-// the intrepid reader may optionally investigate more arguments to safeexec below
-
-/* 
-The above-defined variable is the maximum total memory that will be allowed
-for the sandboxed process. This includes two Java VMs: one for executing
-the code to be debugged, and one for controlling/tracing it. On some machines
-a memlimit_k of 500000 (that's actually ~0.5 GB) is enough, but not all.
-
-See cp/traceprinter/MEMORY-NOTES in java_jail for more information.
+$safeexec_args['chroot_dir'] = "../java_jail/";        
 */
 
-/***************************************************************************/
-/* Below should not normally need to be configured unless you like logging */
-/***************************************************************************/
+// now, build the command
+global $jv_cmd;
+$jv_cmd = $safeexec;
+foreach ($safeexec_args as $a=>$v) $jv_cmd .= " --$a $v ";
+$jv_cmd .= "--exec $java_in_jail";
+foreach ($java_args as $a=>$v) $jv_cmd .= " -$a $v ";
+$jv_cmd .= "traceprinter.InMemory";
+
+// echo $jv_cmd; // for debugging
 
 /* To enable logging, create a file called .dbcfg.php that looks like this:
 
@@ -56,12 +86,8 @@ CREATE TABLE IF NOT EXISTS `jv_history` (
  PRIMARY KEY (`id`)
 )
 
-In the future, it would make sense to cache anything that is not randomized.
+In the future, it could make sense to cache anything that is not randomized.
 */
-
-/****************************************************************************/
-/* Below should not normally need to be configured even if you like logging */
-/****************************************************************************/
 
 // report an error which caused the code not to run
 function visError($msg, $row, $col, $code, $se_stdout = null) {
@@ -128,31 +154,12 @@ function maketrace() {
      2 => array("pipe", "w"),// stderr
      );
 
-  // this classpath assumes you have things set up as described by
-  // https://github.com/daveagp/java_jail 
-  $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib';
-
-  global $safeexec, $java_jail, $memlimit_k;
-  $cmd = "$safeexec ".             // run safeexec
-    " --chroot_dir $java_jail ".   // use this as /
-    " --exec_dir / ".              // execute in the new /
-    " --env_vars '' ".             // pass no environment vars
-    " --nproc 50 ".                // max 50 processes
-    " --mem $memlimit_k ".         // this memory limit
-    " --nfile 30 ".                // max 30 file handles
-    " --clock 5 ".                 // 5 seconds wall time max 
-    " --exec /java/bin/java ".     // run java,
-    (" -Xmx128M ".                 // with this mem limit per VM,
-     " -cp $cp ".                  // this classpath,
-     " traceprinter.InMemory");    // and this main class.
-  // (all input will come on stdin rather than args[])
-  
-  //echo $cmd; // if you want help debugging
-
   $output = array();
   $return = -1;
 
-  $process = proc_open($cmd, $descriptorspec, $pipes); //pwd, env not needed
+  // use the command
+  global $jv_cmd;
+  $process = proc_open($jv_cmd, $descriptorspec, $pipes); //pwd, env not needed
   
   if (!is_resource($process)) return FALSE;
 
