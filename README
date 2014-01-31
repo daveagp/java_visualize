@@ -26,8 +26,7 @@ written in a server-side language. Everything else we use is static,
 although OnlinePythonTutor has some server-side files that this Java
 version does not use.
 
-For the backend to work the recommended way, you should do these
-optional but highly recommended steps
+The way we use this code is (requires root or sudo access):
  -- install CEMC safeexec on your system --  https://github.com/cemc/safeexec
  -- install java_jail on your system -- https://github.com/daveagp/java_jail 
  -- you have to be root to set these up
