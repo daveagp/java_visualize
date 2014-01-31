@@ -2,7 +2,7 @@
 
 /*****************************************************************************
 
-java_visualize/java_safe_maketrace.php: gateway for submitting code to visualize
+java_visualize/java_safe_ram_maketrace.php: gateway for submitting code to visualize
 David Pritchard (daveagp@gmail.com), created May 2013
 
 This file is released under the GNU Affero General Public License, versions 3
@@ -12,6 +12,56 @@ See README for documentation.
 
 ******************************************************************************/
 
+// point this at wherever you installed the executable from 
+// https://github.com/cemc/safeexec
+$safeexec = "../safeexec/safeexec";  
+
+// point this at wherever you installed
+// https://github.com/daveagp/java_jail
+$java_jail = "../java_jail/";        
+
+// memory limit in kilobytes, read on below
+$memlimit_k = 1000000;
+// the intrepid reader may optionally investigate more arguments to safeexec below
+
+/* 
+The above-defined variable is the maximum total memory that will be allowed
+for the sandboxed process. This includes two Java VMs: one for executing
+the code to be debugged, and one for controlling/tracing it. On some machines
+a memlimit_k of 500000 (that's actually ~0.5 GB) is enough, but not all.
+
+See cp/traceprinter/MEMORY-NOTES in java_jail for more information.
+*/
+
+/***************************************************************************/
+/* Below should not normally need to be configured unless you like logging */
+/***************************************************************************/
+
+/* To enable logging, create a file called .dbcfg.php that looks like this:
+
+<?php
+define('JV_HOST', "your database host here (could be localhost)");
+define('JV_USER', "your database user here");
+define('JV_DB', "your database db here");
+define('JV_PWD', "your database password here");
+
+At the moment, it's pretty crappy and just logs requests to a 
+table 'jv_history' that should have this structure
+
+CREATE TABLE IF NOT EXISTS `jv_history` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ `user_code` varchar(8000) COLLATE utf8_unicode_ci NOT NULL,
+ `internal_error` tinyint(1) NOT NULL,  
+ PRIMARY KEY (`id`)
+)
+
+In the future, it would make sense to cache anything that is not randomized.
+*/
+
+/****************************************************************************/
+/* Below should not normally need to be configured even if you like logging */
+/****************************************************************************/
 
 // report an error which caused the code not to run
 function visError($msg, $row, $col, $code, $se_stdout = null) {
@@ -25,12 +75,14 @@ function visError($msg, $row, $col, $code, $se_stdout = null) {
 }
 
 function logit($user_code, $internal_error) {
-  require_once('.dbcfg.php');
-  $con = mysqli_connect(JV_HOST, JV_USER, JV_PWD, JV_DB);
-  $stmt = $con->prepare("INSERT INTO jv_history (user_code, internal_error) VALUES (?, " . ($internal_error?1:0).")");
-  $stmt->bind_param("s", $user_code);
-  $stmt->execute();
-  $stmt->close();
+  if (file_exists('.dbcfg.php')) {
+    require_once('.dbcfg.php');
+    $con = mysqli_connect(JV_HOST, JV_USER, JV_PWD, JV_DB);
+    $stmt = $con->prepare("INSERT INTO jv_history (user_code, internal_error) VALUES (?, " . ($internal_error?1:0).")");
+    $stmt->bind_param("s", $user_code);
+    $stmt->execute();
+    $stmt->close();
+  }
 }
 
 
@@ -40,7 +92,7 @@ function maketrace() {
     return visError("Error: http mangling? Could not find data variable.", 0, 0, "");
 
   $data = $_REQUEST['data'];
-  //$user_stdin = $_REQUEST['user_stdin']; //stdin is not really supported yet for java
+
   if (strlen($data) > 10000)
     return visError("Too much code!");
   
@@ -74,40 +126,33 @@ function maketrace() {
     (0 => array("pipe", "r"), 
      1 => array("pipe", "w"),// stdout
      2 => array("pipe", "w"),// stderr
-//     3 => array("pipe", "r"),// stdin for visualized program
      );
 
-  define ('JV_PRINCETON', substr($_SERVER['SERVER_NAME'], -13)=='princeton.edu');
-  if (JV_PRINCETON) {
-    
-    $safeexec  = "/n/fs/htdocs/cos126/safeexec/safeexec"; // an executable
-    $java_jail = "/n/fs/htdocs/cos126/java_jail/";    // a directory, with trailing slash
-    $inc = "-i $safeexec -i /n/fs/htdocs/cos126/java_jail/cp -i /etc/alternatives/java_sdk_1.7.0/lib/tools.jar";
-    
-    $cp = 'cp/:cp/javax.json-1.0.jar:cp/stdlib:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
-    
-    $java = '/etc/alternatives/java_sdk_1.7.0/bin/java';
-    
-    // clear out the environment variables in the safeexec call.
-    // note: -cp would override CLASSPATH if it were set
-    chdir($java_jail);
-    $command_execute = "sandbox $inc $safeexec --nproc 500 --mem 3000000 --nfile 30 --clock 15 --exec $java -Xmx400M -cp $cp traceprinter.InMemory";
+  // this classpath assumes you have things set up as described by
+  // https://github.com/daveagp/java_jail 
+  $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib';
 
-  }
-  else {
-    $safeexec = "../../safeexec/safeexec"; // an executable
-    if (substr($_SERVER['REQUEST_URI'], 0, 5)=='/dev/')
-      $java_jail = "../../../dev_java_jail/";    // a directory, with trailing slash
-    else
-      $java_jail = "../../../java_jail/";    // a directory, with trailing slash
-    $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib';
-    $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 500000 --nfile 30 --clock 5 --exec /java/bin/java -Xmx128M -cp $cp traceprinter.InMemory";
-  }
+  global $safeexec, $java_jail, $memlimit_k;
+  $cmd = "$safeexec ".             // run safeexec
+    " --chroot_dir $java_jail ".   // use this as /
+    " --exec_dir / ".              // execute in the new /
+    " --env_vars '' ".             // pass no environment vars
+    " --nproc 50 ".                // max 50 processes
+    " --mem $memlimit_k ".         // this memory limit
+    " --nfile 30 ".                // max 30 file handles
+    " --clock 5 ".                 // 5 seconds wall time max 
+    " --exec /java/bin/java ".     // run java,
+    (" -Xmx128M ".                 // with this mem limit per VM,
+     " -cp $cp ".                  // this classpath,
+     " traceprinter.InMemory");    // and this main class.
+  // (all input will come on stdin rather than args[])
+  
+  //echo $cmd; // if you want help debugging
 
   $output = array();
   $return = -1;
 
-  $process = proc_open($command_execute, $descriptorspec, $pipes); //cwd, env not needed
+  $process = proc_open($cmd, $descriptorspec, $pipes); //pwd, env not needed
   
   if (!is_resource($process)) return FALSE;
 
@@ -118,9 +163,6 @@ function maketrace() {
   
   fwrite($pipes[0], $data_to_send);
   fclose($pipes[0]);
-  
-  //  fwrite($pipes[3], $user_stdin);
-  //  fclose($pipes[3]);
   
   $se_stdout = stream_get_contents($pipes[1]); 
   $se_stderr = stream_get_contents($pipes[2]);
