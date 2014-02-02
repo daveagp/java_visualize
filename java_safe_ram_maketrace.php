@@ -12,7 +12,13 @@ See README for documentation.
 
 ******************************************************************************/
 
-global $safeexec, $safeexec_args, $java_in_jail, $java_args; 
+global $safeexec, $safeexec_args, $java_in_jail, $java_args, $visualizer_args; 
+
+// if desired, override traceprinter parameters
+$visualizer_args = array(
+//    "MAX_STEPS" => 256,
+//    "MAX_STACK_SIZE" => 4,
+    );                    
 
 // point this at the excutable you built from
 // https://github.com/cemc/safeexec
@@ -162,11 +168,14 @@ function maketrace() {
   $process = proc_open($jv_cmd, $descriptorspec, $pipes); //pwd, env not needed
   
   if (!is_resource($process)) return FALSE;
-
+  
+  global $visualizer_args;
+  if (count($visualizer_args)==0) $visualizer_args = null; // b/c array() is not associative in php!
   $data_to_send = json_encode(array("usercode"=>$user_code, 
                                     "options"=>$options,
                                     "args"=>$args,
-                                    "stdin"=>$stdin));
+                                    "stdin"=>$stdin,
+                                    "visualizer_args"=>$visualizer_args));
   
   fwrite($pipes[0], $data_to_send);
   fclose($pipes[0]);
