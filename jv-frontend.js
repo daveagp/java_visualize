@@ -109,10 +109,7 @@ function getUserArgs() {
 }
 
 function getUserStdin() {
-  if ($("#stdin-xdiv").is(":visible"))
     return window.stdinarea.value;
-  else
-    return "";
 }
 
 $(document).ready(function() {
