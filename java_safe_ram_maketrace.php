@@ -71,6 +71,26 @@ $jv_cmd .= "--exec $java_in_jail";
 foreach ($java_args as $a=>$v) $jv_cmd .= " -$a $v ";
 $jv_cmd .= "traceprinter.InMemory";
 
+define ('JV_PRINCETON', substr($_SERVER['SERVER_NAME'], -13)=='princeton.edu');
+if (JV_PRINCETON) {
+  
+  $safeexec  = "/n/fs/htdocs/cos126/safeexec/safeexec"; // an executable
+  $java_jail = "/n/fs/htdocs/cos126/java_jail/";    // a directory, with trailing slash
+  $inc = "-i /n/fs/htdocs/cos126/java_jail/cp -i /etc/alternatives/java_sdk_1.7.0/lib/tools.jar";
+  
+  $cp = 'cp/:cp/javax.json-1.0.jar:cp/stdlib:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
+  
+  $java = '/etc/alternatives/java_sdk_1.7.0/bin/java';
+  
+  // clear out the environment variables in the safeexec call.
+  // note: -cp would override CLASSPATH if it were set
+  chdir($java_jail);
+
+  $jv_cmd = "sandbox $inc $java -Xmx400M -cp $cp traceprinter.InMemory";
+  
+}
+
+
 // echo $jv_cmd; // for debugging
 
 /* To enable logging, create a file called .dbcfg.php that looks like this:
