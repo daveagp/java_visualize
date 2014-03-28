@@ -2,7 +2,7 @@
 
 /*****************************************************************************
 
-java_visualize/java_safe_maketrace.php: gateway for submitting code to visualize
+java_visualize/java_safe_ram_maketrace.php: gateway for submitting code to visualize
 David Pritchard (daveagp@gmail.com), created May 2013
 
 This file is released under the GNU Affero General Public License, versions 3
@@ -12,6 +12,88 @@ See README for documentation.
 
 ******************************************************************************/
 
+global $safeexec, $safeexec_args, $java_in_jail, $java_args, $visualizer_args; 
+
+// if desired, override traceprinter parameters
+$visualizer_args = array(
+//    "MAX_STEPS" => 256,
+//    "MAX_STACK_SIZE" => 4,
+    );                    
+
+// point this at the excutable you built from
+// https://github.com/cemc/safeexec
+$safeexec = "../../safeexec/safeexec";   // EDIT THIS
+
+$safeexec_args = array(
+  // point this at wherever you installed and configured
+  // https://github.com/daveagp/java_jail
+  "chroot_dir" => "../../java_jail/",    // EDIT THIS
+
+  // you may choose to tweak these important performance parameters
+  "clock" => "15",    // up to 15s of wall time
+  "cpu" => "10",      // up to 10s of cpu time
+  "mem" => "1000000", // use up to 1000000k ~ 1g of memory (YMMV)
+                      // counting both VMs and all overhead
+                      // see java_jail/cp/traceprinter/MEMORY-NOTES
+
+  // on almost all machines you should not need to edit anything below in this file
+
+  "exec_dir" => "/",  // execute in root of chroot
+  "env_vars" => "''", // no env vars
+  "nproc" => "50",    // max 50 processes
+  "nfile" => "30",    // up to 30 file handles
+);
+
+// the next two definitions assume things are set up like
+// https://github.com/daveagp/java_jail 
+$java_in_jail = '/java/bin/java';
+$java_args = array(
+  "Xmx128M" => "", // 128 mb per VM
+  "cp" =>      '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib'
+);
+
+// this is to override the definitions above in a git-friendly way
+if (file_exists('.cfg.php')) 
+  require_once('.cfg.php');
+
+/* e.g. my .cfg.php looks like this:
+<?php
+global $safeexec, $safeexec_args;
+$safeexec = "../safeexec/safeexec";  
+$safeexec_args['chroot_dir'] = "../java_jail/";        
+*/
+
+// now, build the command
+global $jv_cmd;
+$jv_cmd = $safeexec;
+foreach ($safeexec_args as $a=>$v) $jv_cmd .= " --$a $v ";
+$jv_cmd .= "--exec $java_in_jail";
+foreach ($java_args as $a=>$v) $jv_cmd .= " -$a $v ";
+$jv_cmd .= "traceprinter.InMemory";
+
+// echo $jv_cmd; // for debugging
+
+/* To enable logging, create a file called .dbcfg.php that looks like this:
+
+<?php
+define('JV_HOST', "your database host here (could be localhost)");
+define('JV_USER', "your database user here");
+define('JV_DB', "your database db here");
+define('JV_PWD', "your database password here");
+
+At the moment, it's pretty crappy and just logs requests to a 
+table 'jv_history' that should have this structure
+
+CREATE TABLE IF NOT EXISTS `jv_history` (
+ `id` int(11) NOT NULL AUTO_INCREMENT,
+ `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ `user_code` varchar(8000) COLLATE utf8_unicode_ci NOT NULL,
+ `internal_error` tinyint(1) NOT NULL,  
+ PRIMARY KEY (`id`)
+)
+
+In the future, it could make sense to cache anything that is not randomized.
+*/
 
 // report an error which caused the code not to run
 function visError($msg, $row, $col, $code, $se_stdout = null) {
@@ -25,12 +107,14 @@ function visError($msg, $row, $col, $code, $se_stdout = null) {
 }
 
 function logit($user_code, $internal_error) {
-  require_once('.dbcfg.php');
-  $con = mysqli_connect(JV_HOST, JV_USER, JV_PWD, JV_DB);
-  $stmt = $con->prepare("INSERT INTO jv_history (user_code, internal_error) VALUES (?, " . ($internal_error?1:0).")");
-  $stmt->bind_param("s", $user_code);
-  $stmt->execute();
-  $stmt->close();
+  if (file_exists('.dbcfg.php')) {
+    require_once('.dbcfg.php');
+    $con = mysqli_connect(JV_HOST, JV_USER, JV_PWD, JV_DB);
+    $stmt = $con->prepare("INSERT INTO jv_history (user_code, internal_error) VALUES (?, " . ($internal_error?1:0).")");
+    $stmt->bind_param("s", $user_code);
+    $stmt->execute();
+    $stmt->close();
+  }
 }
 
 
@@ -40,7 +124,7 @@ function maketrace() {
     return visError("Error: http mangling? Could not find data variable.", 0, 0, "");
 
   $data = $_REQUEST['data'];
-  //$user_stdin = $_REQUEST['user_stdin']; //stdin is not really supported yet for java
+
   if (strlen($data) > 10000)
     return visError("Too much code!");
   
@@ -74,53 +158,27 @@ function maketrace() {
     (0 => array("pipe", "r"), 
      1 => array("pipe", "w"),// stdout
      2 => array("pipe", "w"),// stderr
-//     3 => array("pipe", "r"),// stdin for visualized program
      );
-
-  define ('JV_PRINCETON', substr($_SERVER['SERVER_NAME'], -13)=='princeton.edu');
-  if (JV_PRINCETON) {
-    
-    $safeexec  = "/n/fs/htdocs/cos126/safeexec/safeexec"; // an executable
-    $java_jail = "/n/fs/htdocs/cos126/java_jail/";    // a directory, with trailing slash
-    $inc = "-i $safeexec -i /n/fs/htdocs/cos126/java_jail/cp -i /etc/alternatives/java_sdk_1.7.0/lib/tools.jar";
-    
-    $cp = 'cp/:cp/javax.json-1.0.jar:cp/stdlib:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
-    
-    $java = '/etc/alternatives/java_sdk_1.7.0/bin/java';
-    
-    // clear out the environment variables in the safeexec call.
-    // note: -cp would override CLASSPATH if it were set
-    chdir($java_jail);
-    $command_execute = "sandbox $inc $safeexec --nproc 500 --mem 3000000 --nfile 30 --clock 15 --exec $java -Xmx400M -cp $cp traceprinter.InMemory";
-
-  }
-  else {
-    $safeexec = "../../safeexec/safeexec"; // an executable
-    if (substr($_SERVER['REQUEST_URI'], 0, 5)=='/dev/')
-      $java_jail = "../../../dev_java_jail/";    // a directory, with trailing slash
-    else
-      $java_jail = "../../../java_jail/";    // a directory, with trailing slash
-    $cp = '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib';
-    $command_execute = "$safeexec --chroot_dir $java_jail --exec_dir / --env_vars '' --nproc 50 --mem 500000 --nfile 30 --clock 5 --exec /java/bin/java -Xmx128M -cp $cp traceprinter.InMemory";
-  }
 
   $output = array();
   $return = -1;
 
-  $process = proc_open($command_execute, $descriptorspec, $pipes); //cwd, env not needed
+  // use the command
+  global $jv_cmd;
+  $process = proc_open($jv_cmd, $descriptorspec, $pipes); //pwd, env not needed
   
   if (!is_resource($process)) return FALSE;
-
+  
+  global $visualizer_args;
+  if (count($visualizer_args)==0) $visualizer_args = null; // b/c array() is not associative in php!
   $data_to_send = json_encode(array("usercode"=>$user_code, 
                                     "options"=>$options,
                                     "args"=>$args,
-                                    "stdin"=>$stdin));
+                                    "stdin"=>$stdin,
+                                    "visualizer_args"=>$visualizer_args));
   
   fwrite($pipes[0], $data_to_send);
   fclose($pipes[0]);
-  
-  //  fwrite($pipes[3], $user_stdin);
-  //  fclose($pipes[3]);
   
   $se_stdout = stream_get_contents($pipes[1]); 
   $se_stderr = stream_get_contents($pipes[2]);

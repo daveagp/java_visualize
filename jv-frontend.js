@@ -109,10 +109,7 @@ function getUserArgs() {
 }
 
 function getUserStdin() {
-  if ($("#stdin-xdiv").is(":visible"))
     return window.stdinarea.value;
-  else
-    return "";
 }
 
 $(document).ready(function() {
@@ -657,9 +654,13 @@ $(document).ready(function() {
 
 
   // log a generic AJAX error handler
-  var ajaxErrorHandler = function() {
-      alert("Server error (possibly due to memory/resource overload). Report a bug to daveagp@gmail.com\n\n(Click the 'Generate URL' button to include a unique URL in your email bug report.)");
+  var ajaxErrorHandler = function(jqXHR, textStatus, errorThrown) {
+      var errinfo = "textStatus: " + textStatus + "\nerrorThrown: " + errorThrown + "\nServer reply: " + jqXHR.responseText;
+
+      alert("Server error. Report a bug to daveagp@gmail.com (click 'Generate URL' and include it). Debug info (also copied to console):\n" + errinfo);
       
+      console.log(errinfo);
+
       $('#executeBtn').html("Visualize execution");
       $('#executeBtn').attr('disabled', false);
   };
