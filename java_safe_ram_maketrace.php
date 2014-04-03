@@ -32,7 +32,7 @@ $safeexec_args = array(
   // you may choose to tweak these important performance parameters
   "clock" => "15",    // up to 15s of wall time
   "cpu" => "10",      // up to 10s of cpu time
-  "mem" => "1000000", // use up to 1000000k ~ 1g of memory (YMMV)
+  "mem" => "2000000", // use up to 1000000k ~ 1g of memory (YMMV)
                       // counting both VMs and all overhead
                       // see java_jail/cp/traceprinter/MEMORY-NOTES
 
