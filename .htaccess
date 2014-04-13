@@ -1,5 +1,5 @@
 Options +FollowSymLinks
-<FilesMatch "config.json">
-    Order Deny,Allow
-    Deny From All
+<FilesMatch "config\.json$">
+Order Allow,Deny
+Deny from all
 </FilesMatch>
