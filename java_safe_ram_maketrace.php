@@ -12,27 +12,51 @@ See README for documentation.
 
 ******************************************************************************/
 
-global $safeexec, $safeexec_args, $java_in_jail, $java_args, $visualizer_args; 
+$data = file_get_contents("config.json");
+$config_error = "";
+if ($data == FALSE) {
+  $config_error = "Couldn't find config.json";
+ }
+ else {
+   $config_jo = json_decode($data, TRUE); // associative array
+   if ($config_jo == NULL) {
+     echo "config.json is not JSON formatted";
+   }
+   else foreach (array("safeexec-executable-abspath", "java_jail-abspath") as $required) {
+     if (!array_key_exists($required, $config_jo)) {
+       echo "config.json does not define $required. You cannot submit any code.";
+     }
+   }      
+ }
+if ($config_error != "") {
+  echo $config_error;
+  die();
+ }
+
+function config_get($key, $default) {
+  global $config_jo;
+  if (array_key_exists($key, $config_jo)) 
+    return $config_jo[$key];
+  return $default;
+}
 
 // if desired, override traceprinter parameters
-$visualizer_args = array(
-//    "MAX_STEPS" => 256,
-//    "MAX_STACK_SIZE" => 4,
-    );                    
+$visualizer_args = config_get("visualizer_args", array());
 
 // point this at the excutable you built from
 // https://github.com/cemc/safeexec
-$safeexec = "../../safeexec/safeexec";   // EDIT THIS
+$safeexec = config_get("safeexec-executable-abspath");
 
 $safeexec_args = array(
   // point this at wherever you installed and configured
   // https://github.com/daveagp/java_jail
-  "chroot_dir" => "../../java_jail/",    // EDIT THIS
+  "chroot_dir" => config_get("java_jail-abspath"),
 
   // you may choose to tweak these important performance parameters
-  "clock" => "15",    // up to 15s of wall time
-  "cpu" => "10",      // up to 10s of cpu time
-  "mem" => "2000000", // use up to 1000000k ~ 1g of memory (YMMV)
+  "clock" => config_get("safeexec_wallclock_s", 15),
+  "cpu" => config_get("safeexec_cpu_s", 10),
+  "mem" => config_get("safeexec_mem_k", 2000000),
+                      // use up to 2000000k ~ 2g of memory (YMMV)
                       // counting both VMs and all overhead
                       // see java_jail/cp/traceprinter/MEMORY-NOTES
 
@@ -44,63 +68,68 @@ $safeexec_args = array(
   "nfile" => "30",    // up to 30 file handles
 );
 
+// allow arbitrary overrides
+foreach (config_get("safeexec_args", array()) as $k=>$v)
+  $safeexec_args[$k] = $v;
+
+// allow wholesale replacement
+$safeexec_args = config_get("safeexec_args_override", $safeexec_args);
+
 // the next two definitions assume things are set up like
 // https://github.com/daveagp/java_jail 
-$java_in_jail = '/java/bin/java';
+$java_in_jail = config_get("java_in_jail", "/java/bin/java");
 $java_args = array(
-  "Xmx128M" => "", // 128 mb per VM
-  "cp" =>      '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib'
+  "Xmx" => "128M", // 128 mb per VM
+  "cp" =>  '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib'
 );
 
-// this is to override the definitions above in a git-friendly way
-if (file_exists('.cfg.php')) 
-  require_once('.cfg.php');
+// allow arbitrary overrides
+foreach (config_get("java_args", array()) as $k=>$v)
+  $java_args[$k] = $v;
 
-/* e.g. my .cfg.php looks like this:
-<?php
-global $safeexec, $safeexec_args;
-$safeexec = "../safeexec/safeexec";  
-$safeexec_args['chroot_dir'] = "../java_jail/";        
-*/
+// allow wholesale replacement
+$java_args = config_get("java_args_override", $java_args);
 
-// now, build the command
-global $jv_cmd;
+// safeexec uses --exec, sandbox uses nothing
+$safeexec_exec_signal = config_get("safeexec_exec_signal", "--exec");
+
+// now, build the command:
+// safeexec --arg1 val1 ... --exec java_in_jail -arg1 val1 ... traceprinter.InMemory
 $jv_cmd = $safeexec;
 foreach ($safeexec_args as $a=>$v) $jv_cmd .= " --$a $v ";
-$jv_cmd .= "--exec $java_in_jail";
-foreach ($java_args as $a=>$v) $jv_cmd .= " -$a $v ";
+$jv_cmd .= " $safeexec_exec_signal $java_in_jail";
+// -X commands don't use a space
+foreach ($java_args as $a=>$v) $jv_cmd .= " " . (substr($a, 0, 1)=='X' ? "-$a$v" : "-$a $v") . " ";
 $jv_cmd .= "traceprinter.InMemory";
 
-define ('JV_PRINCETON', substr($_SERVER['SERVER_NAME'], -13)=='princeton.edu');
-if (JV_PRINCETON) {
-  
-  $safeexec  = "/n/fs/htdocs/cos126/safeexec/safeexec"; // an executable
-  $java_jail = "/n/fs/htdocs/cos126/java_jail/";    // a directory, with trailing slash
-  $inc = "-i /n/fs/htdocs/cos126/java_jail/cp -i /etc/alternatives/java_sdk_1.7.0/lib/tools.jar";
-  
-  $cp = 'cp/:cp/javax.json-1.0.jar:cp/stdlib:/etc/alternatives/java_sdk_1.7.0/lib/tools.jar';
-  
-  $java = '/etc/alternatives/java_sdk_1.7.0/bin/java';
-  
-  // clear out the environment variables in the safeexec call.
-  // note: -cp would override CLASSPATH if it were set
-  chdir($java_jail);
-
-  $jv_cmd = "sandbox $inc $java -Xmx400M -cp $cp traceprinter.InMemory";
-  
-}
-
+// necessary for sandbox at princeton
+$newdir = config_get("chdir_before_call", ".");
+chdir($newdir);
 
 // echo $jv_cmd; // for debugging
 
-/* To enable logging, create a file called .dbcfg.php that looks like this:
+// report an error which caused the code not to run
+function visError($msg, $row, $col, $code, $se_stdout = null) {
+  if (!is_int($col))
+    $col = 0;
+  if (!is_int($row))
+    $row = -1;
+  return '{"trace":[{"line": '.$row.', "event": "uncaught_exception", '
+    .'"offset": '.$col.', "exception_msg": '.json_encode($msg).'}],'
+    .'"code":'.json_encode($code) .
+    ($se_stdout === null ? '' : (',"se_stdout":'.json_encode($se_stdout)))
+    .'}';
+}
 
-<?php
-define('JV_HOST', "your database host here (could be localhost)");
-define('JV_USER', "your database user here");
-define('JV_DB', "your database db here");
-define('JV_PWD', "your database password here");
+// do logging if enabled
+function logit($user_code, $internal_error) {
 
+  if (config_get("db_host", "") != ""
+      && config_get("db_user", "") != ""
+      && config_get("db_database", "") != ""
+      && config_get("db_password", "") != "")
+    
+/* 
 At the moment, it's pretty crappy and just logs requests to a 
 table 'jv_history' that should have this structure
 
@@ -114,27 +143,14 @@ CREATE TABLE IF NOT EXISTS `jv_history` (
 
 In the future, it could make sense to cache anything that is not randomized.
 */
-
-// report an error which caused the code not to run
-function visError($msg, $row, $col, $code, $se_stdout = null) {
-  if (!is_int($col))
-    $col = 0;
-  return '{"trace":[{"line": '.$row.', "event": "uncaught_exception", '
-    .'"offset": '.$col.', "exception_msg": '.json_encode($msg).'}],'
-    .'"code":'.json_encode($code) .
-    ($se_stdout === null ? '' : (',"se_stdout":'.json_encode($se_stdout)))
-    .'}';
-}
-
-function logit($user_code, $internal_error) {
-  if (file_exists('.dbcfg.php')) {
-    require_once('.dbcfg.php');
-    $con = mysqli_connect(JV_HOST, JV_USER, JV_PWD, JV_DB);
-    $stmt = $con->prepare("INSERT INTO jv_history (user_code, internal_error) VALUES (?, " . ($internal_error?1:0).")");
-    $stmt->bind_param("s", $user_code);
-    $stmt->execute();
-    $stmt->close();
-  }
+    {
+      $con = mysqli_connect(config_get("db_host"), config_get("db_user"), 
+                            config_get("db_password"), config_get("db_database"));
+      $stmt = $con->prepare("INSERT INTO jv_history (user_code, internal_error) VALUES (?, " . ($internal_error?1:0).")");
+      $stmt->bind_param("s", $user_code);
+      $stmt->execute();
+      $stmt->close();
+    }
 }
 
 
@@ -145,7 +161,7 @@ function maketrace() {
 
   $data = $_REQUEST['data'];
 
-  if (strlen($data) > 10000)
+  if (strlen($data) > config_get("max_request_size_bytes", 10000))
     return visError("Too much code!");
   
   $data = json_decode($data, true); // get assoc. arrays, not objects
@@ -183,8 +199,8 @@ function maketrace() {
   $output = array();
   $return = -1;
 
-  // use the command
   global $jv_cmd;
+  // use the command
   $process = proc_open($jv_cmd, $descriptorspec, $pipes); //pwd, env not needed
   
   if (!is_resource($process)) return FALSE;

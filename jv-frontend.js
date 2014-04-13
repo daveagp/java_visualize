@@ -229,7 +229,7 @@ $(document).ready(function() {
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
              options_json: JSON.stringify(options)*/
             dataType: "json",
-            timeout: 10000, //ms
+            timeout: pytutor_ajax_timeout_millis, //ms
 		error: ajaxErrorHandler,
             success: function(dataFromBackend) {
               console.log(["Data from backend:", dataFromBackend]);
@@ -248,7 +248,7 @@ $(document).ready(function() {
                     pyInputCodeMirror.focus();
                     pyInputCodeMirror.setCursor(errorLineNo, 0);
                     var marked = pyInputCodeMirror.addLineClass(errorLineNo, null, 'errorLine');
-                      console.log(marked);
+                      //console.log(marked);
                       var hook = function(marked) { return function() {
                           pyInputCodeMirror.removeLineClass(marked, null, 'errorLine'); // reset line back to normal
                           pyInputCodeMirror.off('change', hook); // cancel
@@ -287,7 +287,7 @@ $(document).ready(function() {
                                                        {startingInstruction:  startingInstruction,
                                                         updateOutputCallback: function() {$('#urlOutput,#embedCodeOutput').val('');},
                                                         // tricky: selector 'true' and 'false' values are strings!
-                                                        disableHeapNesting: ($('#heapPrimitivesSelector').val() == 'true'),
+                                                        disableHeapNesting: true,//($('#heapPrimitivesSelector').val() == 'true'),
                                                         drawParentPointers: ($('#drawParentPointerSelector').val() == 'true'),
                                                         textualMemoryLabels: ($('#textualMemoryLabelsSelector').val() == 'true'),
                                                         showOnlyOutputs: ($('#showOnlyOutputsSelector').val() == 'true'),
@@ -295,8 +295,7 @@ $(document).ready(function() {
                                                         //allowEditAnnotations: true,
                                                         resizeLeftRight: true,
                                                         highlightLines: true,
-                                                        lang: "java",
-                                                        stdin: getUserStdin()
+                                                        stdin: getUserStdin(),
                                                        });
                   
 
@@ -605,7 +604,7 @@ $(document).ready(function() {
 
   var loadExample = $.bbq.getState('sampleFile');
   if (loadExample) {
-      console.log(loadExample);
+      //console.log(loadExample);
       if (loadExample.match(/[a-zA-Z]+/))
     exampleCallback(examplesDir+loadExample+".java")();
   }

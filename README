@@ -21,7 +21,8 @@ Next, in some folder accessible to your web server,
 git clone https://github.com/daveagp/java_visualize
 cd java_visualize
 git clone https://github.com/marijnh/CodeMirror CodeMirror3
-git clone https://github.com/cemc/OnlinePythonTutor
+git clone https://github.com/daveagp/OnlinePythonTutor
+// TODO: make last line above agree with main pgbovine repo.
 
 (alternatively, install CodeMirror3, OnlinePythonTutor as symlinks or subrepos.
 note the name CodeMirror*3* and the *version* of the PythonTutor used.)
@@ -30,24 +31,26 @@ At this point, visiting
 http://url-referencing-java_visualize/
 should give you a beautiful (but non-working) frontend, and
 http://url-referencing-java_visualize/java_safe_ram_maketrace.php
+should give you a "Couldn't find config.json" error.
+
+Next, copy config.example.json to config.json. Now visiting
+http://url-referencing-java_visualize/java_safe_ram_maketrace.php
 should give you a "http mangling" error.
 
-Finally, edit the first few lines of
-java_safe_ram_maketrace.php
-(or use .cfg.php as described therein)
-to indicate where you installed safeexec and java_jail
+Finally, edit config.json to indicate where you installed safeexec 
+and java_jail. (Just those first two entries need to be changed right now.)
 
-Now try the visualizer out!
+Now, try the visualizer out!
 
 MORE INFO
-
-What's inside this directory:
  -- index.html is a modified version of visualize.html 
  -- jv-frontend.js is a modified version of opt-frontend.js
  -- java_safe_ram_maketrace.php connects the frontend to the backend
+ -- config.* is used for configuration stuff specific to your server
+ -- pytutor-customizations.{js,css} overrides some behaviour of OPT
  -- example-code is a directory full of example Java files to visualize
 
-Note that in the entire frontend, only java_safe_ram_maketrace.php is a file
+Note that in the entire frontend, only the two .php files are
 written in a server-side language. Everything else we use is static,
 although OnlinePythonTutor has some server-side files that this Java
 version does not use.
@@ -57,6 +60,6 @@ version does not use.
 The modified files (index.html, jv-frontend.js) retain the MIT license 
 under which they were published in the OnlinePythonTutor repo. 
 
-The other files (java_safe_ram_maketrace.php, example-code/*) are released under
+The other files are released under
 the GNU Affero General Public License, versions 3 or later. See LICENSE
 or visit: http://www.gnu.org/licenses/agpl.html

@@ -1,0 +1,45 @@
+{"remark1" : "edit the 2 paths below to run anything",
+
+ "safeexec-executable-abspath": "/your/path/to/safeexec/safeexec", 
+ "java_jail-abspath": "/your/path/to/java_jail/",
+
+ "remark2" : [
+        "optinally, edit these to log the submissions",
+        "see java_safe_ram_maketrace.php for db format",
+        "WARNING: check that the url with the passwords,",
+        "http://url-referencing-java_visualize/config.json",
+        "can NOT be accessed in the browser.",
+        ".htaccess tries to hide it, but YMMV!!!",
+
+        "also note that .gitignore ignores config.json",
+        "because of this security information.",
+        "back it up using an alternative method if desired."
+ ],
+
+ "db_host": "",
+ "db_user": "",
+ "db_database": "",
+ "db_password": "",
+
+ "remark3" : "optionally, edit these performance parameters",
+
+ "ajax_timeout_millis": 30000,
+
+ "safeexec_wallclock_s": 15,
+ "safeexec_cpu_s": 10,
+ "safeexec_mem_k": 2000000,
+
+ "visualizer_args": {
+   "MAX_STEPS": 512,
+   "MAX_STACK_SIZE": 16,
+   "MAX_WALLTIME_SECONDS": 5,
+   "remark": "time above starts before compiling"
+ },
+
+ "max_request_size_bytes" : 10000,
+
+ "remark4": "below is the amount of memory for _each_ of the 2 VMs",
+ "java_args" : {
+    "Xmx" : "150M"
+ }
+}
