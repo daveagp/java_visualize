@@ -1,6 +1,7 @@
 add_pytutor_hook(
   "renderPrimitiveObject",
-  function(obj, d3DomElement) {
+  function(args) {
+    var obj = args.obj, d3DomElement = args.d3DomElement;
     var typ = typeof obj;
     if (obj == null) 
       d3DomElement.append('<span class="nullObj">null</span>');
@@ -48,7 +49,8 @@ add_pytutor_hook(
 
 add_pytutor_hook(
   "isPrimitiveType", 
-  function(obj) {
+  function(args) {
+    var obj = args.obj;
     if ((obj instanceof Array && obj[0] == "VOID")
         || (obj instanceof Array && obj[0] == "NUMBER-LITERAL")
         || (obj instanceof Array && obj[0] == "CHAR-LITERAL")
@@ -59,7 +61,8 @@ add_pytutor_hook(
 
 add_pytutor_hook(
   "end_updateOutput",
-  function(myViz) {
+  function(args) {
+    var myViz = args.myViz;
     var curEntry = myViz.curTrace[myViz.curInstr];
     if (myViz.params.stdin && myViz.params.stdin != "") {
       var stdinPosition = curEntry.stdinPosition || 0;
@@ -75,7 +78,8 @@ add_pytutor_hook(
 
 add_pytutor_hook(
   "end_constructor",
-  function(myViz) {
+  function(args) {
+    var myViz = args.myViz;
     if ((myViz.curTrace.length > 0)
         && myViz.curTrace[myViz.curTrace.length-1]
         && myViz.curTrace[myViz.curTrace.length-1].stdout) {
@@ -100,7 +104,8 @@ add_pytutor_hook(
 
 add_pytutor_hook(
   "end_render",
-  function(myViz) {
+  function(args) {
+    var myViz = args.myViz;
     myViz.domRoot.find('#pyStdout').attr('cols', 1);
     myViz.domRoot.find('#pyStdout').attr('rows', Math.min(10, myViz.stdoutLines));
     
@@ -114,7 +119,8 @@ add_pytutor_hook(
 
 add_pytutor_hook(
   "isLinearObject",
-  function(heapObj) {
+  function(args) {
+    var heapObj = args.heapObj;
     if (heapObj[0]=='STACK' || heapObj[0]=='QUEUE')
       return ['true', 'true'];
     return ['false'];
@@ -122,7 +128,13 @@ add_pytutor_hook(
 
 add_pytutor_hook(
   "renderCompoundObject",
-  function(objID, d3DomElement, isTopLevel, obj, typeLabelPrefix, renderNestedObject) {
+  function(args) {
+    var objID = args.objID;
+    var d3DomElement = args.d3DomElement;
+    var obj = args.obj;
+    var typeLabelPrefix = args.typeLabelPrefix;
+    var renderNestedObject = args.renderNestedObject;
+
     if (!(obj[0] == 'LIST' || obj[0] == 'QUEUE' || obj[0] == 'STACK')) 
       return [false]; // didn't handle
 
@@ -197,7 +209,8 @@ add_pytutor_hook(
 
 add_pytutor_hook(
   "end_renderDataStructures",
-  function (myViz) {
+  function(args) {
+    var myViz = args.myViz;
     myViz.domRoot.find("td.instKey:contains('___NO_LABEL!___')").hide();
     myViz.domRoot.find(".typeLabel:contains('dict')").each(
       function(i) {
