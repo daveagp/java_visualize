@@ -1,5 +1,6 @@
 public class Strings {
     public static void main(String[] args) {
+        // In "options", enable "Show String... objects"
         String a = "Hello, world!";
         String b = "Hello, world!!".substring(0, 13);
         String c = "Hello, ";

@@ -1,0 +1,73 @@
+div.ExecutionVisualizer .numberObj {
+    white-space: nowrap;
+}
+
+div.ExecutionVisualizer div#codeDisplayDiv {
+  width: default;
+}
+
+div.ExecutionVisualizer #pyStdout {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  width: 100%;
+}
+
+div.ExecutionVisualizer table.queueTbl,
+div.ExecutionVisualizer table.stackTbl {
+  background-color: #ffffc6;
+}
+
+div.ExecutionVisualizer table.queueTbl,
+div.ExecutionVisualizer table.stackTbl {
+  border: 0px solid black;
+  border-spacing: 0px;
+}
+
+div.ExecutionVisualizer table.stackTbl td.stackElt,
+div.ExecutionVisualizer table.queueTbl td.queueElt {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 2px;
+  padding-bottom: 3px;
+  border-top: 1px solid #555555;
+  border-bottom: 1px solid #555555; 
+  border-left: 1px dashed #555555; 
+}
+
+div.ExecutionVisualizer table.stackTbl td.stackFElt,
+div.ExecutionVisualizer table.queueTbl td.queueFElt {
+  background-color: white;
+  border-top: 1px solid #555555;
+  border-bottom: 1px solid #555555;
+}
+
+div.ExecutionVisualizer table.stackTbl td.stackLElt {
+  background-color: white;
+  border-left: 1px solid #555555;
+}
+
+div.ExecutionVisualizer table.queueTbl td.queueLElt {
+  background-color: white;
+  border-top: 1px solid#555555;
+  border-bottom: 1px solid #555555;
+  border-left: 1px dashed #555555;
+}
+
+/* TODO: update this to reflect the addition of queue and stack types. 
+ only add a border to dicts if they're embedded within another object 
+div.ExecutionVisualizer td.listElt table.dictTbl,
+div.ExecutionVisualizer td.tupleElt table.dictTbl,
+div.ExecutionVisualizer td.dictVal table.dictTbl,
+div.ExecutionVisualizer td.instVal table.dictTbl,
+div.ExecutionVisualizer td.classVal table.dictTbl {
+  border: 1px #888 solid;
+} */
+
+div.ExecutionVisualizer .highlight-cur {
+  background-color: #FFFF66;
+}
+
+.symbolic {
+  font-size: 18pt;
+}

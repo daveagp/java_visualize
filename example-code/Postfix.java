@@ -1,4 +1,3 @@
-import java.util.Stack;
 public class Postfix {
     public static void main(String[] args) {
         Stack<Integer> stacky = new Stack<>();
