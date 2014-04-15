@@ -65,7 +65,8 @@ $safeexec_args = array(
   "exec_dir" => "/",  // execute in root of chroot
   "env_vars" => "''", // no env vars
   "nproc" => "50",    // max 50 processes
-  "nfile" => "30",    // up to 30 file handles
+  "nfile" => "50",    // up to 50 file handles. 
+                      // depends on number of files you are including!
 );
 
 // allow arbitrary overrides
