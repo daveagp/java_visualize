@@ -1,5 +1,4 @@
 import java.util.function.*;
-import java.util.ArrayList;
 
 public class LambdaExample {
    
