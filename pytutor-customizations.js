@@ -222,6 +222,13 @@ add_pytutor_hook(
       });
   });
 
+// java synthetics cause things which javascript doesn't like in an id
+var old_generateID = ExecutionVisualizer.prototype.generateID;
+ExecutionVisualizer.prototype.generateID = function(original_id) {
+    return old_generateID(original_id.replace(/\$/g, '_dollar_'));
+}
+
+// utility functions
 var entityMap = {
   "&": "&amp;",
   "<": "&lt;",
