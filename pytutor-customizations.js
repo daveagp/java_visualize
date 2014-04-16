@@ -177,6 +177,7 @@ add_pytutor_hook(
       }
     } // end of LIST handling
 
+   // Stack and Queue handling code by Will Gwozdz
     /* The table produced for stacks and queues is formed slightly differently than the others,
    missing the header row. Two rows made the dashed border not line up properly */
     if (obj[0] == 'STACK') { 

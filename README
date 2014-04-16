@@ -21,8 +21,7 @@ Next, in some folder accessible to your web server,
 git clone https://github.com/daveagp/java_visualize
 cd java_visualize
 git clone https://github.com/marijnh/CodeMirror CodeMirror3
-git clone https://github.com/daveagp/OnlinePythonTutor
-// TODO: make last line above agree with main pgbovine repo.
+git clone https://github.com/pgbovine/OnlinePythonTutor
 
 (alternatively, install CodeMirror3, OnlinePythonTutor as symlinks or subrepos.
 note the name CodeMirror*3* and the *version* of the PythonTutor used.)

@@ -13,6 +13,7 @@ div.ExecutionVisualizer #pyStdout {
   width: 100%;
 }
 
+/* stack and queue css by Will Gwozdz */
 div.ExecutionVisualizer table.queueTbl,
 div.ExecutionVisualizer table.stackTbl {
   background-color: #ffffc6;

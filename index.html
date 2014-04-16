@@ -59,8 +59,10 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <script type="text/javascript" src="./OnlinePythonTutor/v3/js/jquery.qtip.min.js"></script>
 <link type="text/css" href="./OnlinePythonTutor/v3/css/jquery.qtip.css" rel="stylesheet" />
 
-<script type="text/javascript" src="./OnlinePythonTutor/v3/js/pytutor.js?4"></script>
-<script type="text/javascript" src="./OnlinePythonTutor/v3/js/hooks.js?4"></script>
+<!--<script type="text/javascript" src="./OnlinePythonTutor/v3/js/pytutor.js?4"></script>
+<script type="text/javascript" src="./OnlinePythonTutor/v3/js/hooks.js?4"></script> waiting for upstream changes! -->
+<script type="text/javascript" src="opt-temp/pytutor.js"></script>
+<script type="text/javascript" src="opt-temp/hooks.js"></script>
 <script type="text/javascript" src="pytutor-customizations.js?1"></script>
 <link rel="stylesheet" href="./OnlinePythonTutor/v3/css/pytutor.css"/>
 <link rel="stylesheet" href="pytutor-customizations.css"/>
@@ -284,7 +286,22 @@ Execute code using
 <a id="nonlocalLink" href="#">nonlocal</a>
 </p>
 -->
-<div>The visualizer supports <code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdIn.html">StdIn</a></code>, <code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdOut.html">StdOut</a></code> and the other libraries <a href="http://introcs.cs.princeton.edu/java/stdlib">here</a>.</div>
+<div>The visualizer supports 
+<code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdIn.html">StdIn</a></code>, 
+<code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdOut.html">StdOut</a></code>, 
+the other <a href="http://introcs.cs.princeton.edu/java/stdlib"><tt>stdlib</tt> libraries</a>,
+<a href="http://introcs.cs.princeton.edu/java/43stack/Stack.java.html"><tt>Stack</tt></a>,
+<a href="http://introcs.cs.princeton.edu/java/43stack/Queue.java"><tt>Queue</tt></a>,
+and <a href="http://introcs.cs.princeton.edu/java/44st/ST.java.html"><tt>ST</tt></a>.
+<a href="javascript:jQuery('#faq').toggle()">FAQ</a>
+<div id='faq' style='display:none'>
+<ul>
+<li><i>How can I access Java's built-in <tt>Stack</tt>/<tt>Queue</tt> instead of the introcs one?</i> At the top of your program, write <tt>import java.util.Stack;</tt> &mdash; note, <tt>import java.util.*;</tt> won't work.
+</li>
+</ul>
+</div>
+</div>
+
 </div>
 
 
@@ -350,7 +367,7 @@ to receive occasional announcements.
 -->
 
 <p style="margin-top: 8px;">
-Based on <a href="http://www.onlinepythontutor.com">Online Python Tutor</a>, &copy; 2010-2013 <a href="http://www.pgbovine.net/">Philip Guo</a> all rights reserved. Java version by <a href="mailto:daveagp@gmail.com">David Pritchard</a>.
+Based on <a href="http://www.onlinepythontutor.com">Online Python Tutor</a>, &copy; 2010-2013 <a href="http://www.pgbovine.net/">Philip Guo</a> all rights reserved. Java version by <a href="mailto:daveagp@gmail.com">David Pritchard</a>, <a href="https://github.com/wgwozdz">Will Gwozdz</a>.
 Source code: for this version's <a href="https://github.com/daveagp/java_jail/tree/master/cp/traceprinter">backend</a>;
 the <a href="https://github.com/daveagp/java_visualize">frontend and installation instructions</a>.
 </p>

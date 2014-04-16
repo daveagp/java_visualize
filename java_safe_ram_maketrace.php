@@ -81,7 +81,7 @@ $safeexec_args = config_get("safeexec_args_override", $safeexec_args);
 $java_in_jail = config_get("java_in_jail", "/java/bin/java");
 $java_args = array(
   "Xmx" => "128M", // 128 mb per VM
-  "cp" =>  '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/stdlib'
+  "cp" =>  '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/visualizer-stdlib'
 );
 
 // allow arbitrary overrides
