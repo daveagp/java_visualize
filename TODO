@@ -11,6 +11,11 @@ caches for past visualizations (probably don't cache 10 times to see if randomiz
 should allow to access java.util.Stack etc
 
 inner classes, local classes, anonymous classes, lambdas, captured final variables, this$ ...
+lambdas:
+- desugar 2 frames into one and pass "this", doable
+- skip frames that don't make sense, doable
+- replace random name with defining source line, doable if called, but annoying
+- replace arg$1 etc with actual captured variable name. no idea!
 
 figure out suspend/resume (e.g. for exception handling, data structures)
 
