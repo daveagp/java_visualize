@@ -139,7 +139,7 @@ $(document).ready(function() {
 //        "public class ClassNameHere {\n" +
 //            "    public static void main(String[] args) {\n        \n    }\n}");
 
-  pyInputCodeMirror.setSize(null, '420px');
+  pyInputCodeMirror.setSize(null, 'auto');
 
 
 
