@@ -7,12 +7,12 @@ public class StackQueue {
       queue.enqueue("first");
       queue.enqueue("second");
       for (String s : stack) 
-          System.out.println("stack contains " + s);
+         System.out.println("stack contains " + s);
       for (String s : queue)
-          System.out.println("queue contains " + s);
+         System.out.println("queue contains " + s);
       while (!stack.isEmpty())
-          System.out.println(stack.pop());
+         System.out.println(stack.pop());
       while (!queue.isEmpty())
-          System.out.println(queue.dequeue());
+         System.out.println(queue.dequeue());
    }
 }
