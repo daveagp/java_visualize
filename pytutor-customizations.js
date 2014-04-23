@@ -133,7 +133,7 @@ add_pytutor_hook(
     var d3DomElement = args.d3DomElement;
     var obj = args.obj;
     var typeLabelPrefix = args.typeLabelPrefix;
-    var renderNestedObject = args.renderNestedObject;
+    var myViz = args.myViz;
 
     if (!(obj[0] == 'LIST' || obj[0] == 'QUEUE' || obj[0] == 'STACK')) 
       return [false]; // didn't handle
@@ -167,7 +167,7 @@ add_pytutor_hook(
         
         contentTr.append('<td class="'+ label + 'Elt"></td>');
         if (!elide) {
-          renderNestedObject(val, contentTr.find('td:last'));
+          myViz.renderNestedObject(val, contentTr.find('td:last'));
           ind++;
         }
         else {
@@ -187,7 +187,7 @@ add_pytutor_hook(
       $.each(obj, function(ind, val) {
         if (ind < 1) return; // skip type tag and ID entry
         contentTr.append('<td class="'+ label + 'Elt"></td>');
-        renderNestedObject(val, contentTr.find('td:last'));
+        myViz.renderNestedObject(val, contentTr.find('td:last'));
       });
       contentTr.append('<td class="'+ label + 'LElt">'+'</td>');
     }
@@ -200,7 +200,7 @@ add_pytutor_hook(
       $.each(obj, function(ind, val) {
         if (ind < 1) return; // skip type tag and ID entry
         contentTr.append('<td class="'+ label + 'Elt"></td>');
-        renderNestedObject(val, contentTr.find('td:last'));
+        myViz.renderNestedObject(val, contentTr.find('td:last'));
       });
       contentTr.append('<td class="'+ label + 'LElt">'+'<span class="stringObj symbolic">&#8592;</span></td>');    
     }
