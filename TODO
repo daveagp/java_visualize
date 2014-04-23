@@ -1,14 +1,8 @@
-only add a border to stacks/queues if they're embedded within another object
-
-examples for ST / better documentation on main page about supported classes/libraries
-
 graphics! either encode primitive operations as text, or send frames
 
 short hashes for urls
 
 caches for past visualizations (probably don't cache 10 times to see if randomized/time-dependent)
-
-should allow to access java.util.Stack etc
 
 inner classes, local classes, anonymous classes, lambdas, captured final variables, this$ ...
 lambdas:
@@ -20,5 +14,3 @@ lambdas:
 figure out suspend/resume (e.g. for exception handling, data structures)
 
 selective visualization of contents of some built-in classes?
-
-nested visualization option?
