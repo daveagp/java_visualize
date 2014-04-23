@@ -210,19 +210,14 @@ $(document).ready(function() {
       $("#pyOutputPane").hide();
       $("#embedLinkDiv").hide();
 
+    var java_backend_options = {};
+    java_backend_options.showStringsAsValues = !$('#showStringsAsObjects').is(':checked');
+    java_backend_options.showAllFields = $('#showAllFields').is(':checked');
 
-      // set up all options in a JS object
-      var options = {cumulative_mode: ($('#cumulativeModeSelector').val() == 'true'),
-                     heap_primitives: ($('#heapPrimitivesSelector').val() == 'true'),
-                     show_only_outputs: ($('#showOnlyOutputsSelector').val() == 'true')};
-
-    var java_options = {};
-    java_options.showStringsAsValues = !$('#showStringsAsObjects').is(':checked');
-    java_options.showAllFields = $('#showAllFields').is(':checked');
     $.ajax({url: backend_script,
             data: {data : JSON.stringify({
               user_script : pyInputCodeMirror.getValue(),
-              options: java_options,
+              options: java_backend_options,
               args: getUserArgs(),
               stdin: getUserStdin()})},
            /*,
@@ -282,22 +277,26 @@ $(document).ready(function() {
                   startingInstruction = forceStartingInstr;
                 }
 
+                var frontend_options = 
+                  {startingInstruction: startingInstruction,
+                   updateOutputCallback: 
+                   function() {
+                     $('#urlOutput,#embedCodeOutput').val('');
+                   },
+                   disableHeapNesting: $('#disableNesting').is(':checked'),
+                   drawParentPointers: false,
+                   textualMemoryLabels: false,
+                   showOnlyOutputs: false,
+                   executeCodeWithRawInputFunc: executeCodeWithRawInput,
+                   //allowEditAnnotations: true,
+                   resizeLeftRight: true,
+                   highlightLines: true,
+                   stdin: getUserStdin(),
+                  };
+
                 myVisualizer = new ExecutionVisualizer('pyOutputPane',
                                                        dataFromBackend,
-                                                       {startingInstruction:  startingInstruction,
-                                                        updateOutputCallback: function() {$('#urlOutput,#embedCodeOutput').val('');},
-                                                        // tricky: selector 'true' and 'false' values are strings!
-                                                        disableHeapNesting: true,//($('#heapPrimitivesSelector').val() == 'true'),
-                                                        drawParentPointers: ($('#drawParentPointerSelector').val() == 'true'),
-                                                        textualMemoryLabels: ($('#textualMemoryLabelsSelector').val() == 'true'),
-                                                        showOnlyOutputs: ($('#showOnlyOutputsSelector').val() == 'true'),
-                                                        executeCodeWithRawInputFunc: executeCodeWithRawInput,
-                                                        //allowEditAnnotations: true,
-                                                        resizeLeftRight: true,
-                                                        highlightLines: true,
-                                                        stdin: getUserStdin(),
-                                                       });
-                  
+                                                       frontend_options);
 
                 // also scroll to top to make the UI more usable on smaller monitors
                 $(document).scrollTop(0);
@@ -633,6 +632,10 @@ $(document).ready(function() {
     $('#showAllFields').prop('checked', true);
     $('#options').show();
   }
+  if (typeof $.bbq.getState('disableNesting') !== "undefined") {
+    $('#disableNesting').prop('checked', true);
+    $('#options').show();
+  }
 
   appMode = $.bbq.getState('mode'); // assign this to the GLOBAL appMode
   if ((appMode == "display") && preseededCode /* jump to display only with pre-seeded code */) {
@@ -691,6 +694,8 @@ $(document).ready(function() {
       myArgs.showStringsAsObjects='';
     if ($('#showAllFields').is(':checked'))
       myArgs.showAllFields='';
+    if ($('#disableNesting').is(':checked'))
+      myArgs.disableNesting='';
 
     if (getUserArgs().length > 0)
       myArgs.args = JSON.stringify(getUserArgs());

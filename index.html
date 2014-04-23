@@ -83,7 +83,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 <table style="margin:0px auto 0px auto;"><tr><td><img title="Based on icons by Jacob Halton and Francesco Terzini of the Noun Project" src="img/jv64.png"></td><td style="text-align: center"><span style="font-size:150%">Java Visualizer</span><br><i>(beta:</i> 
  <a href="mailto:daveagp@gmail.com">report a bug</a>)
-</td><table>
+</td></table>
 
 <div id="pyInputPane">
 
@@ -92,20 +92,30 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 <div id="codeInputPane">
 </div> <!-- populate with a CodeMirror instance -->
 
-<div>
+<table><tr>
+<td>
 <button onclick="$('#options').toggle()">options</button>
+</td>
+<td>
 <span id='options' style='display:none'>
-<input id='showStringsAsObjects' type='checkbox'>
-<label for='showStringsAsObjects'>
-Show String/Integer/etc objects, not just values
-</label>
-<input id='showAllFields' type='checkbox'>
-<label for='showAllFields'>
-Show overridden fields, synthetics
-</label>
-</input>
-</span>
-</div>
+ <span style="white-space: nowrap;"> 
+  <input id='showStringsAsObjects' type='checkbox'>
+  <label for='showStringsAsObjects'>
+  Show String/Integer/etc objects, not just values
+ </span>
+ <span style="white-space: nowrap;"> 
+  <input id='showAllFields' type='checkbox'>
+  <label for='showAllFields'>
+  Show overridden fields, synthetics
+ </span>
+ <span style="white-space: nowrap;"> 
+  <input id='disableNesting' type='checkbox'>
+  <label for='disableNesting'>
+  Avoid nesting instances within instances
+ </span>
+</span> <!-- #options -->
+</td>
+</tr></table>
 
 <div id='args'>
 <code>args</code>: <span id='argslist'></span>
@@ -152,6 +162,7 @@ text-decoration:none;
 color:red;
 cursor:pointer;
 }
+
 </style>
 
 <script type='text/javascript'>
