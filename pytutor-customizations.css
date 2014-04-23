@@ -55,15 +55,16 @@ div.ExecutionVisualizer table.queueTbl td.queueLElt {
   border-left: 1px dashed #555555;
 }
 
-/* TODO: update this to reflect the addition of queue and stack types. 
- only add a border to dicts if they're embedded within another object 
-div.ExecutionVisualizer td.listElt table.dictTbl,
-div.ExecutionVisualizer td.tupleElt table.dictTbl,
-div.ExecutionVisualizer td.dictVal table.dictTbl,
-div.ExecutionVisualizer td.instVal table.dictTbl,
-div.ExecutionVisualizer td.classVal table.dictTbl {
+/* This ensures a border is drawn around a dict
+   if its nested in another object. */
+div.ExecutionVisualizer td.stackElt table.dictTbl,
+div.ExecutionVisualizer td.stackLElt table.dictTbl,
+div.ExecutionVisualizer td.stackFElt table.dictTbl,
+div.ExecutionVisualizer td.queueElt table.dictTbl,
+div.ExecutionVisualizer td.queueLElt table.dictTbl,
+div.ExecutionVisualizer td.queueFElt table.dictTbl {
   border: 1px #888 solid;
-} */
+} 
 
 div.ExecutionVisualizer .highlight-cur {
   background-color: #FFFF66;
