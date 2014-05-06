@@ -8,8 +8,8 @@ public class Variables {
 
       int x = 5;
       int y = 10;
-      int tmp = x;
+      int t = x;
       x = y;
-      y = tmp;
+      y = t;
    }
 }
