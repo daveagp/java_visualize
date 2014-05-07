@@ -1,6 +1,7 @@
 import java.util.function.*;
 
 public class LambdaExample {
+    // note: this only works in Java 8
    
    static Function<Integer, Integer> inc(int x) {
       return y -> x+y;
