@@ -1,3 +1,5 @@
+rightwardNudgeHack = false;
+
 add_pytutor_hook(
   "renderPrimitiveObject",
   function(args) {
