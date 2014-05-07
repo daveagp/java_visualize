@@ -173,6 +173,14 @@ addArg = function(init) {
 $('#args').on('click', '.closex', function(event) {
   $(this).parents('span.arg').remove();
 });
+
+topics = [
+["basic",["(Default)","Variables","CmdLineArgs","StdIn","ControlFlow","Sqrt","ExecLimit","Strings"]],
+["method",["PassByValue","Recursion","StackOverflow"]],
+["oop",["Rolex","Person","Complex","Casting"]],
+["java feature",["ToString","Reflect","Exception","ExceptionFlow","TwoClasses"]],
+["data structure",["LinkedList","StackQueue","Postfix","SymbolTable"]]
+];
 </script>
 
 <!--
@@ -214,7 +222,7 @@ Execute code using
 </p>
 
 
-<p style="margin-top: 25px;" id="examplesHolder">Examples:<br/>
+<p style="margin-top: 25px;" id="examplesHolder">
 
 <!--
 <a id="aliasExampleLink" href="#">hello</a> |

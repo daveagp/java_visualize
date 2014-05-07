@@ -14,7 +14,11 @@ public class Synthetic {
 
       final String[] magic = {"7", "8"};
       // anonymous class
-      Object e = new Object(){public String toString() {return magic[1];}};
+      Object e = new Object(){
+              public String toString() {
+                  return magic[1];
+              }
+      };
       // it has a synthetic variable val$magic
       System.out.println(e.toString());
 
@@ -25,3 +29,4 @@ public class Synthetic {
       x.foo();
    }
 }
+/*viz_options {"showAllFields":true}*/

@@ -1,9 +1,12 @@
 public class Casting {
    public static void main(String[] args) {
-      int[] e = {1,2,3};
-      Object f = e;
-      e = null; // instance is still int[]
-      System.out.println(((int[])f)[0]); // 1
+      // casting doesn't change the object
+      Object obj;
+      { 
+          String arr = "some text";
+          obj = arr;
+      }
+      System.out.println(arr); // still a string
    }
 }
         

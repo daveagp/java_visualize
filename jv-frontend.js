@@ -97,7 +97,16 @@ function enterDisplayNoFrillsMode() {
 var pyInputCodeMirror; // CodeMirror object that contains the input text
 
 function setCodeMirrorVal(dat) {
-  pyInputCodeMirror.setValue(dat.rtrim() /* kill trailing spaces */);
+  if (dat.indexOf("/*viz_options")>-1) {
+    var viz_options = dat.substring(dat.indexOf("/*viz_options")+13);
+    dat = dat.substring(0, dat.indexOf("/*viz_options"));
+    viz_options = viz_options.replace(/\s*(\*\/)?\s*$/, ""); // remove trailing spaces, */
+    viz_options = JSON.parse(viz_options);
+    setOptions(function(key){ return viz_options[key] });
+  }
+  else
+    setOptions(function(key){ return undefined;});
+  pyInputCodeMirror.setValue(dat.rtrim());
   $('#urlOutput,#embedCodeOutput').val('');
 
   // also scroll to top to make the UI more usable on smaller monitors
@@ -330,8 +339,6 @@ $(document).ready(function() {
 
     var examplesDir = "./example-code/";
 
-    var exampleCount = 0;
-    
     var exampleCallback = function(url) {
 	return function() {$.get(url, setCodeMirrorVal); return false;};
     }
@@ -340,254 +347,45 @@ $(document).ready(function() {
 	return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
 
-    var populateExamples = function(index_page) { 
-	$(index_page).find("td > a").each(function() {
-		var filename = $(this).attr("href");
-		if (filename.endsWith(".java")) { // skip link to ..
-		    if (exampleCount != 0) 
-			$("#examplesHolder").append(" | ");
-		    exampleCount++;
-		    var newItem = $("<a href='#'>" + filename.substring(0, filename.length-5) + "</a>");
-		    newItem.click(exampleCallback(examplesDir + filename));
-		    $("#examplesHolder").append(newItem);
-		}
-	    });
-    };
+  // populate examples
+  var done = {};
+  for (var i=0; i<topics.length; i++) {
+    if (i != 0) $("#examplesHolder").append("<br>");
+    $("#examplesHolder").append(topics[i][0]);
+    $("#examplesHolder").append(" examples");
+    for (var j=0; j<topics[i][1].length; j++) {
+      $("#examplesHolder").append(" | ");
+      filename = topics[i][1][j];
+      var newItem = $("<a href='#'>" + filename + "</a>");
+      newItem.click(exampleCallback(examplesDir + filename + ".java"));
+      $("#examplesHolder").append(newItem);
+      done[filename] = true;
+    }
+  }
 
-    $.ajax({
-	    url: "./example-code/",
-	    success: populateExamples,
-	    error: function() { $.ajax({
-			url: "./example-code/backup-listing.html", 
-			    success: populateExamples,
-			    error: ajaxErrorHandler}); }
-	});
-
-/*
-  $("#tutorialExampleLink").click(function() {
-    $.get(examplesDir + "py_tutorial.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#strtokExampleLink").click(function() {
-    $.get(examplesDir + "strtok.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#listCompLink").click(function() {
-    $.get(examplesDir + "list-comp.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#fibonacciExampleLink").click(function() {
-    $.get(examplesDir + "fib.txt", setCodeMirrorVal);
-    return false;
+  var populate_misc = function(index_page) {
+      $("#examplesHolder").append("<br>misc examples");
+      var first = true;
+      $(index_page).find("td > a").each(function() {
+	var filename = $(this).attr("href");
+	if (filename.endsWith(".java")) { // an example
+          filename = filename.substring(0, filename.length-5);
+          if (done[filename]) return;
+	  var newItem = $("<a href='#'>" + filename + "</a>");
+	  newItem.click(exampleCallback(examplesDir + filename + ".java"));
+	  $("#examplesHolder").append(" | ");
+          $("#examplesHolder").append(newItem);          
+	}
+      });
+  };
+  
+  // fetch uncategorized
+  $.ajax({
+    url: "./example-code/",
+    success: populate_misc,
+    error: function() {console.log("warning: couldn't read examples directory index");}
   });
 
-  $("#memoFibExampleLink").click(function() {
-    $.get(examplesDir + "memo_fib.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#factExampleLink").click(function() {
-    $.get(examplesDir + "fact.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#filterExampleLink").click(function() {
-    $.get(examplesDir + "filter.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#insSortExampleLink").click(function() {
-    $.get(examplesDir + "ins_sort.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#aliasExampleLink").click(function() {
-    $.get(examplesDir + "aliasing.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#happyExampleLink").click(function() {
-    $.get(examplesDir + "happy.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#newtonExampleLink").click(function() {
-    $.get(examplesDir + "sqrt.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#oopSmallExampleLink").click(function() {
-    $.get(examplesDir + "oop_small.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#mapExampleLink").click(function() {
-    $.get(examplesDir + "map.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#rawInputExampleLink").click(function() {
-    $.get(examplesDir + "raw_input.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#oop1ExampleLink").click(function() {
-    $.get(examplesDir + "oop_1.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#oop2ExampleLink").click(function() {
-    $.get(examplesDir + "oop_2.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#inheritanceExampleLink").click(function() {
-    $.get(examplesDir + "oop_inherit.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#sumExampleLink").click(function() {
-    $.get(examplesDir + "sum.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#pwGcdLink").click(function() {
-    $.get(examplesDir + "wentworth_gcd.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#pwSumListLink").click(function() {
-    $.get(examplesDir + "wentworth_sumList.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#towersOfHanoiLink").click(function() {
-    $.get(examplesDir + "towers_of_hanoi.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#pwTryFinallyLink").click(function() {
-    $.get(examplesDir + "wentworth_try_finally.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#sumCubesLink").click(function() {
-    $.get(examplesDir + "sum-cubes.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#decoratorsLink").click(function() {
-    $.get(examplesDir + "decorators.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#genPrimesLink").click(function() {
-    $.get(examplesDir + "gen_primes.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $("#genExprLink").click(function() {
-    $.get(examplesDir + "genexpr.txt", setCodeMirrorVal);
-    return false;
-  });
-
-
-  $('#closure1Link').click(function() {
-    $.get(examplesDir + "closures/closure1.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#closure2Link').click(function() {
-    $.get(examplesDir + "closures/closure2.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#closure3Link').click(function() {
-    $.get(examplesDir + "closures/closure3.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#closure4Link').click(function() {
-    $.get(examplesDir + "closures/closure4.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#closure5Link').click(function() {
-    $.get(examplesDir + "closures/closure5.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#lambdaParamLink').click(function() {
-    $.get(examplesDir + "closures/lambda-param.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#tortureLink').click(function() {
-    $.get(examplesDir + "closures/student-torture.txt", setCodeMirrorVal);
-    return false;
-  });
-
-
-
-  $('#aliasing1Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing1.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#aliasing2Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing2.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#aliasing3Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing3.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#aliasing4Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing4.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#aliasing5Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing5.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#aliasing6Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing6.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#aliasing7Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing7.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#aliasing8Link').click(function() {
-    $.get(examplesDir + "aliasing/aliasing8.txt", setCodeMirrorVal);
-    return false;
-  });
-
-
-  $('#ll1Link').click(function() {
-    $.get(examplesDir + "linked-lists/ll1.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#ll2Link').click(function() {
-    $.get(examplesDir + "linked-lists/ll2.txt", setCodeMirrorVal);
-    return false;
-  });
-  $('#sumListLink').click(function() {
-    $.get(examplesDir + "sum-list.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $('#varargsLink').click(function() {
-    $.get(examplesDir + "varargs.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $('#forElseLink').click(function() {
-    $.get(examplesDir + "for-else.txt", setCodeMirrorVal);
-    return false;
-  });
-
-  $('#nonlocalLink').click(function() {
-    $.get(examplesDir + "nonlocal.txt", setCodeMirrorVal);
-    return false;
-  });
-*/
 
   // handle hash parameters passed in when loading the page
   preseededCode = $.bbq.getState('code');
@@ -597,8 +395,6 @@ $(document).ready(function() {
   else {
     // select a canned example on start-up:
     exampleCallback(examplesDir+"(Default).java")();
-
-      //    $("#aliasExampleLink").trigger('click');
   }
 
   var loadExample = $.bbq.getState('sampleFile');
@@ -608,52 +404,7 @@ $(document).ready(function() {
     exampleCallback(examplesDir+loadExample+".java")();
   }
 
-  var userArgs = $.bbq.getState('args'); 
-  if (userArgs) {
-    var args_a = JSON.parse(userArgs);
-    for (var i=0; i<args_a.length; i++)
-      addArg(args_a[i]);
-  }
-
-  var userStdin = $.bbq.getState('stdin'); 
-  if (userStdin) {
-    $('#stdin-xdiv').show();
-    $('#stdinarea').val(userStdin);
-  }
-
-  // parse query string options ...
-  // ugh, ugly tristate due to the possibility of them being undefined
-
-  if (typeof $.bbq.getState('showStringsAsObjects') !== "undefined") {
-    $('#showStringsAsObjects').prop('checked', true);
-    $('#options').show();
-  }
-  if (typeof $.bbq.getState('showAllFields') !== "undefined") {
-    $('#showAllFields').prop('checked', true);
-    $('#options').show();
-  }
-  if (typeof $.bbq.getState('disableNesting') !== "undefined") {
-    $('#disableNesting').prop('checked', true);
-    $('#options').show();
-  }
-
-  appMode = $.bbq.getState('mode'); // assign this to the GLOBAL appMode
-  if ((appMode == "display") && preseededCode /* jump to display only with pre-seeded code */) {
-    preseededCurInstr = Number($.bbq.getState('curInstr'));
-    $("#executeBtn").trigger('click');
-  }
-  else {
-    if (appMode === undefined) {
-      // default mode is 'edit', don't trigger a "hashchange" event
-      appMode = 'edit';
-    }
-    else {
-      // fail-soft by killing all passed-in hashes and triggering a "hashchange"
-      // event, which will then go to 'edit' mode
-      $.bbq.removeState();
-    }
-  }
-
+  setOptions(function(key){ return $.bbq.getState(key); });
 
   // log a generic AJAX error handler
   var ajaxErrorHandler = function(jqXHR, textStatus, errorThrown) {
@@ -730,3 +481,56 @@ $(document).ready(function() {
   });
 });
 
+var setOptions = function(lookup_function) {
+  var userArgs = lookup_function('args'); 
+  if (userArgs) {
+    if (!userArgs instanceof Array) 
+      userArgs = JSON.parse(userArgs);
+    for (var i=0; i<userArgs.length; i++)
+      addArg(userArgs[i]);
+  }
+  else {
+    $('span.arg').remove();    
+  }
+
+  var userStdin = lookup_function('stdin'); 
+  if (userStdin) {
+    $('#stdin-xdiv').show();
+    $('#stdinarea').val(userStdin);
+  }
+  else {
+    $('#stdin-xdiv').hide();
+    $('#stdinarea').val('');
+  }
+
+  // parse options
+  var optionNames = ['showStringsAsObjects', 'showAllFields', 'disableNesting'];
+  var someOption = false;
+  for (var i=0; i<optionNames.length; i++) {
+    var optionName = optionNames[i];
+    var value = lookup_function(optionName) ? true : false; // normalize
+    $('#'+optionName).prop('checked', value);
+    someOption |= value;
+  }
+  if (someOption) 
+    $('#options').show();
+  else
+    $('#options').hide();
+
+  appMode = lookup_function('mode'); // assign this to the GLOBAL appMode
+  if ((appMode == "display") && preseededCode /* jump to display only with pre-seeded code */) {
+    preseededCurInstr = Number(lookup_function('curInstr'));
+    $("#executeBtn").trigger('click');
+  }
+  else {
+    if (appMode === undefined) {
+      // default mode is 'edit', don't trigger a "hashchange" event
+      appMode = 'edit';
+    }
+    else {
+      // fail-soft by killing all passed-in hashes and triggering a "hashchange"
+      // event, which will then go to 'edit' mode
+      $.bbq.removeState();
+    }
+  }
+};
