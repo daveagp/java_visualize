@@ -3,10 +3,10 @@ public class Casting {
       // casting doesn't change the object
       Object obj;
       { 
-          String arr = "some text";
-          obj = arr;
+          Stopwatch w = new Stopwatch();
+          obj = w;
       }
-      System.out.println(arr); // still a string
+      System.out.println(obj); // still a Stopwatch
    }
 }
         
