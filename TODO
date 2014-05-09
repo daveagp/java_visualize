@@ -4,13 +4,22 @@ short hashes for urls
 
 caches for past visualizations (probably don't cache 10 times to see if randomized/time-dependent)
 
-inner classes, local classes, anonymous classes, lambdas, captured final variables, this$ ...
-lambdas:
-- desugar 2 frames into one and pass "this", doable
-- skip frames that don't make sense, doable
-- replace random name with defining source line, doable if called, but annoying
-- replace arg$1 etc with actual captured variable name. no idea!
-
 figure out suspend/resume (e.g. for exception handling, data structures)
 
-selective visualization of contents of some built-in classes?
+allow selective visualization of contents of some built-in classes
+
+inner classes, local classes, anonymous classes, lambdas, captured final variables, this$ ...
+- right now we show things exactly from JDWP, like Eclipse or NetBeans
+- no way to recover all lambda arg names given current bytecode
+- could desugar 2 frames into one and pass "this" to nicen a bit
+- here's a class that throws a JWDP exception in both java 7 and 8
+
+public class JWDP32 {
+   public static void main(String[] args) {
+      // x needs to be final, but not a compile-time constant
+      final int x = Math.random() < 2 ? 42 : -42;
+      Object anon = new Object(){int f(){return x;}};
+      class Local{int g(){return x;}}
+      Local loc = new Local();
+   }
+}
