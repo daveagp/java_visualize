@@ -228,7 +228,11 @@ add_pytutor_hook(
 // java synthetics cause things which javascript doesn't like in an id
 var old_generateID = ExecutionVisualizer.prototype.generateID;
 ExecutionVisualizer.prototype.generateID = function(original_id) {
-    return old_generateID(original_id.replace(/\$/g, '_dollar_'));
+  var sanitized = original_id.replace(
+      /[^0-9a-zA-Z_]/g,
+    function(match) {return '-'+match.charCodeAt(0)+'-';}
+  );
+  return old_generateID(sanitized);
 }
 
 // utility functions
