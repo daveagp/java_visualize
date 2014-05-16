@@ -33,7 +33,7 @@ if ($config_error != "") {
   die();
  }
 
-function config_get($key, $default) {
+function config_get($key, $default = NULL) {
   global $config_jo;
   if (array_key_exists($key, $config_jo)) 
     return $config_jo[$key];
