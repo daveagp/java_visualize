@@ -54,6 +54,11 @@ written in a server-side language. Everything else we use is static,
 although OnlinePythonTutor has some server-side files that this Java
 version does not use.
 
+If you use a database, you'll be putting a DB password in config.json.
+Please check that
+ http://your.website/url/to/java_visualize/config.json
+is inaccessible; .htaccess tries to do this, but you should confirm it works.
+
 ====
 
 The modified files (index.html, jv-frontend.js) retain the MIT license 
