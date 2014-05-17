@@ -1,4 +1,3 @@
-Options +FollowSymLinks
 <FilesMatch "config\.json$">
 Order Allow,Deny
 Deny from all
