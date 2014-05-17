@@ -7,7 +7,7 @@ see README for more details.
 
 Summary of changes made:
 - uses Java, not Python
-- uses CodeMirror3, not 2
+- uses CodeMirror latest version
 - lazier approach for loading examples
 
 ==== Header from opt-frontend.js ====

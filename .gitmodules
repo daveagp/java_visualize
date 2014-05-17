@@ -1,0 +1,6 @@
+[submodule "CodeMirror"]
+	path = CodeMirror
+	url = https://github.com/marijnh/CodeMirror.git
+[submodule "OnlinePythonTutor"]
+	path = OnlinePythonTutor
+	url = https://github.com/pgbovine/OnlinePythonTutor.git
