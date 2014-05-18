@@ -1,4 +1,4 @@
-<FilesMatch "config\.json$">
+<FilesMatch "jv-config\.json$">
 Order Allow,Deny
 Deny from all
 </FilesMatch>

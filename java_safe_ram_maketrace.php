@@ -12,19 +12,19 @@ See README for documentation.
 
 ******************************************************************************/
 
-$data = file_get_contents("config.json");
+$data = file_get_contents("jv-config.json");
 $config_error = "";
 if ($data == FALSE) {
-  $config_error = "Couldn't find config.json";
+  $config_error = "Couldn't find jv-config.json";
  }
  else {
    $config_jo = json_decode($data, TRUE); // associative array
    if ($config_jo == NULL) {
-     echo "config.json is not JSON formatted";
+     echo "jv-config.json is not JSON formatted";
    }
    else foreach (array("safeexec-executable-abspath", "java_jail-abspath") as $required) {
      if (!array_key_exists($required, $config_jo)) {
-       echo "config.json does not define $required. You cannot submit any code.";
+       echo "jv-config.json does not define $required. You cannot submit any code.";
      }
    }      
  }

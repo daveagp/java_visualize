@@ -30,13 +30,13 @@ At this point, visiting
  http://your.website/url/to/java_visualize/
 should give you a beautiful (but non-working) frontend, and
  http://your.website/url/to/java_visualize/java_safe_ram_maketrace.php
-should give you a "Couldn't find config.json" error.
+should give you a "Couldn't find jv-config.json" error.
 
-Next, copy config.example.json to config.json. Now visiting
+Next, copy jv-config.example.json to jv-config.json. Now visiting
  http://your.website/url/to/java_visualize/java_safe_ram_maketrace.php
 should give you a "http mangling" error.
 
-Finally, edit config.json to indicate where you installed safeexec 
+Finally, edit jv-config.json to indicate where you installed safeexec 
 and java_jail. (Just those first two entries need to be changed right now.)
 
 Now, try the visualizer out!
@@ -54,9 +54,9 @@ written in a server-side language. Everything else we use is static,
 although OnlinePythonTutor has some server-side files that this Java
 version does not use.
 
-If you use a database, you'll be putting a DB password in config.json.
+If you use a database, you'll be putting a DB password in jv-config.json.
 Please check that
- http://your.website/url/to/java_visualize/config.json
+ http://your.website/url/to/java_visualize/jv-config.json
 is inaccessible; .htaccess tries to do this, but you should confirm it works.
 
 ====
