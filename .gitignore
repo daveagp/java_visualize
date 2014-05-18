@@ -1,2 +1,4 @@
 *~
-jv-config.json
+# hide this file
+# also things like jv-config.json~ and #jv-config.json#
+*jv-config.json*
