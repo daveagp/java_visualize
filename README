@@ -22,9 +22,11 @@ install these in locations that are not served to users by your web server.
 
 Next, in some folder accessible to your web server, run
 
-git clone --recursive https://github.com/daveagp/java_visualize
+    git clone --recursive https://github.com/daveagp/java_visualize
 
-It's recursive because it includes two submodules. Note this if you pull later on!
+It's recursive because it includes two submodules. Because of this, 
+to update, use the pair of commands
+    git pull; git submodule update
 
 At this point, visiting
  http://your.website/url/to/java_visualize/
