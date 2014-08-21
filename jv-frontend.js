@@ -404,7 +404,12 @@ $(document).ready(function() {
     exampleCallback(examplesDir+loadExample+".java")();
   }
 
-  setOptions(function(key){ return $.bbq.getState(key); });
+  // args, and only args, is parsed specially
+  setOptions(function(key){ 
+      var value = $.bbq.getState(key); 
+      if (key=='args' && value != undefined) value = JSON.parse(value);
+      return value;
+  });
 
   // log a generic AJAX error handler
   var ajaxErrorHandler = function(jqXHR, textStatus, errorThrown) {
