@@ -162,7 +162,7 @@ text-decoration:none;
 color:red;
 cursor:pointer;
 }
-
+.toggler { text-align:center; }
 </style>
 
 <script type='text/javascript'>
@@ -172,6 +172,12 @@ addArg = function(init) {
 };
 $('#args').on('click', '.closex', function(event) {
   $(this).parents('span.arg').remove();
+});
+
+$(function(){ $('.toggler a').on('click', function(event) {
+$('#faq').toggle();
+return false;
+});
 });
 
 topics = [
@@ -306,11 +312,14 @@ Execute code using
 <div>The visualizer supports 
 <code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdIn.html">StdIn</a></code>, 
 <code><a href="http://introcs.cs.princeton.edu/java/stdlib/javadoc/StdOut.html">StdOut</a></code>, 
-the other <a href="http://introcs.cs.princeton.edu/java/stdlib"><tt>stdlib</tt> libraries</a>,
+most other <a href="http://introcs.cs.princeton.edu/java/stdlib"><tt>stdlib</tt> libraries</a>,
 <a href="http://introcs.cs.princeton.edu/java/43stack/Stack.java.html"><tt>Stack</tt></a>,
 <a href="http://introcs.cs.princeton.edu/java/43stack/Queue.java.html"><tt>Queue</tt></a>,
 and <a href="http://introcs.cs.princeton.edu/java/44st/ST.java.html"><tt>ST</tt></a>.
-<a style='text-decoration:none' href="javascript:jQuery('#faq').toggle()">Click for <i>FAQ</i>.</a>
+<br>
+<div class='toggler'>
+<a style='text-decoration:none' href='#'>Click for FAQ.</a>
+</div>
 <div id='faq' style='display:none'>
 <ul>
 <li><i>How can I access Java's built-in <tt>Stack</tt>/<tt>Queue</tt> instead of the introcs one?</i> At the top of your program, write <tt>import java.util.Stack;</tt> &mdash; note, <tt>import java.util.*;</tt> won't work.
