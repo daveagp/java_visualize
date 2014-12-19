@@ -67,6 +67,8 @@ $safeexec_args = array(
   "nproc" => "50",    // max 50 processes
   "nfile" => "50",    // up to 50 file handles. 
                       // depends on number of files you are including!
+
+  "share_newnet" => "", // don't unshare network: 2 VMs talk over port
 );
 
 // allow arbitrary overrides
