@@ -223,12 +223,15 @@ $(document).ready(function() {
     java_backend_options.showStringsAsValues = !$('#showStringsAsObjects').is(':checked');
     java_backend_options.showAllFields = $('#showAllFields').is(':checked');
 
-    $.ajax({url: backend_script,
-            data: {data : JSON.stringify({
+    var package = {
               user_script : pyInputCodeMirror.getValue(),
               options: java_backend_options,
               args: getUserArgs(),
-              stdin: getUserStdin()})},
+              stdin: getUserStdin()
+    };
+
+    $.ajax({url: backend_script,
+            data: {data : JSON.stringify(package)},
            /*,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',
              options_json: JSON.stringify(options)*/
