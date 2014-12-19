@@ -184,6 +184,7 @@ $(document).ready(function() {
       // customize edit button click functionality AFTER rendering (NB: awkward!)
       $('#pyOutputPane #editCodeLinkDiv').show();
       $('#pyOutputPane #editBtn').click(function() {
+        $("#data-div").hide();
         enterEditMode();
       });
     }
@@ -229,6 +230,11 @@ $(document).ready(function() {
               args: getUserArgs(),
               stdin: getUserStdin()
     };
+
+    if (window.jv_cpp) {
+        $("#data-div").show();
+        $("#data").html('[visualize]'+encodeURIComponent(JSON.stringify(package))+'[/visualize]');
+    }
 
     $.ajax({url: backend_script,
             data: {data : JSON.stringify(package)},
@@ -309,11 +315,12 @@ $(document).ready(function() {
                 myVisualizer = new ExecutionVisualizer('pyOutputPane',
                                                        dataFromBackend,
                                                        frontend_options);
-
+                
                 // also scroll to top to make the UI more usable on smaller monitors
                 $(document).scrollTop(0);
 
                 $.bbq.pushState({ mode: 'display' }, 2 /* completely override other hash strings to keep URL clean */);
+
               }
             }});
   }
