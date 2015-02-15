@@ -27,7 +27,7 @@
 
  "safeexec_wallclock_s": 15,
  "safeexec_cpu_s": 10,
- "safeexec_mem_k": 2000000,
+ "safeexec_mem_k": 4000000,
 
  "visualizer_args": {
    "MAX_STEPS": 512,
@@ -40,6 +40,6 @@
 
  "remark4": "below is the amount of memory for _each_ of the 2 VMs",
  "java_args" : {
-    "Xmx" : "150M"
+    "Xmx" : "512M"
  }
 }
