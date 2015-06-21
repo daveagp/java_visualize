@@ -71,6 +71,10 @@ being similar to Java; you could use this to fake-visualize any
 other language depending on how much work you're willing to put into writing
 2 parallel versions of the code.
 
+The Java/C++ embedded visualizer is using a modification of an old version
+of the embedded visualizer code. See embed/README for details. It would
+be nice to bring it up to date.
+
 A few educators and students that I have talked to have ideas and partial
 implementations of a "real" C++ visualizer, either by piping through gdb,
 or by using LLDB's API, or by doing something like valgrind. Please email
