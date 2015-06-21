@@ -50,6 +50,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 var python2_backend_script = 'exec';
 var python3_backend_script = null;
 
+var java_iframe_url = './iframe-embed.html';
 var java_backend_script = './java_safe_ram_maketrace.php';
 
 var appMode = 'edit'; // 'edit', 'display', or 'display_no_frills'
@@ -231,9 +232,18 @@ $(document).ready(function() {
               stdin: getUserStdin()
     };
 
-    if (window.jv_cpp) {
+    if (window.faking_cpp) {
         $("#data-div").show();
-        $("#data").html('[visualize]'+encodeURIComponent(JSON.stringify(package))+'[/visualize]');
+// USC Wordpress approach from Spring '15  
+// $("#data").html('[visualize]'+encodeURIComponent(JSON.stringify(package))+'[/visualize]');
+// but this is simpler assuming you are editing raw html:
+       var a = document.createElement('a');
+       // absolutize iframe-embed.html
+       a.href = java_iframe_url;
+       $('#data').val('<iframe style="width: 100%; height: 480;" src="'+a.href
+                      +'#data='+encodeURIComponent(JSON.stringify(package))
+                      +'&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0&resizeContainer=true&highlightLines=true&rightStdout=true&faking_cpp=true" '
+                      +'frameborder="0" scrolling="no"></iframe>');
     }
 
     $.ajax({url: backend_script,
@@ -315,7 +325,7 @@ $(document).ready(function() {
                 myVisualizer = new ExecutionVisualizer('pyOutputPane',
                                                        dataFromBackend,
                                                        frontend_options);
-                
+
                 // also scroll to top to make the UI more usable on smaller monitors
                 $(document).scrollTop(0);
 
