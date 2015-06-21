@@ -185,7 +185,7 @@ $(document).ready(function() {
       // customize edit button click functionality AFTER rendering (NB: awkward!)
       $('#pyOutputPane #editCodeLinkDiv').show();
       $('#pyOutputPane #editBtn').click(function() {
-        $("#data-div").hide();
+        $("#iframeURL-div").hide();
         enterEditMode();
       });
     }
@@ -232,21 +232,21 @@ $(document).ready(function() {
               stdin: getUserStdin()
     };
 
-    if (window.faking_cpp) {
-        $("#data-div").show();
-// USC Wordpress approach from Spring '15  
-// $("#data").html('[visualize]'+encodeURIComponent(JSON.stringify(package))+'[/visualize]');
-// but this is simpler assuming you are editing raw html:
-       var a = document.createElement('a');
-       // absolutize iframe-embed.html
-       a.href = java_iframe_url;
-       $('#data').val('<iframe style="width: 100%; height: 480;" src="'+a.href
-                      +'#data='+encodeURIComponent(JSON.stringify(package))
-                      +'&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0&resizeContainer=true&highlightLines=true&rightStdout=true&faking_cpp=true" '
-                      +'frameborder="0" scrolling="no"></iframe>');
-    }
+     $("#iframeURL-div").show();
+     // USC Wordpress approach from Spring '15  
+     // $("#iframeURL").html('[visualize]'+encodeURIComponent(JSON.stringify(package))+'[/visualize]');
+     // but this is simpler assuming you are editing raw html:
+     var a = document.createElement('a');
+     // absolutize iframe-embed.html
+     a.href = java_iframe_url;
+     $('#iframeURL').val('<iframe style="width: 100%; height: 480;" src="'+a.href
+                         +'?faking_cpp='+(faking_cpp?'true':'false')
+                         +'#data='+encodeURIComponent(JSON.stringify(package))
+                         +'&cumulative=false&heapPrimitives=false&drawParentPointers=false&textReferences=false&showOnlyOutputs=false&py=3&curInstr=0&resizeContainer=true&highlightLines=true&rightStdout=true" '
+                         +'frameborder="0" scrolling="no"></iframe>');
+     
 
-    $.ajax({url: backend_script,
+     $.ajax({url: backend_script,
             data: {data : JSON.stringify(package)},
            /*,
              raw_input_json: rawInputLst.length > 0 ? JSON.stringify(rawInputLst) : '',

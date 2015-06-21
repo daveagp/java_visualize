@@ -11,6 +11,7 @@ function getParameterByName(name) {
 }
 
 if (getParameterByName("faking_cpp")) {
+   console.log(getParameterByName("faking_cpp"));
    var p = getParameterByName("faking_cpp").toUpperCase();
    faking_cpp = (p == "TRUE" || p == "T" || p == "1");
 }
