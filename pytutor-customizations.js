@@ -1,5 +1,20 @@
 rightwardNudgeHack = false;
 
+// turning on does minor tweaks to make things look more like C++, see README
+faking_cpp = true;
+// but allow overriding via URL
+
+// http://stackoverflow.com/questions/901115/
+function getParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+if (getParameterByName("faking_cpp")) {
+   var p = getParameterByName("faking_cpp").toUpperCase();
+   faking_cpp = (p == "TRUE" || p == "T" || p == "1");
+}
+
 add_pytutor_hook(
   "renderPrimitiveObject",
   function(args) {
@@ -64,6 +79,24 @@ add_pytutor_hook(
 add_pytutor_hook(
   "end_updateOutput",
   function(args) {
+     // find the colophon if it exists, and change it to something that makes more sense
+     $('#codeDisplayDiv div a').each(function(i, elt) {
+        if (elt.parentElement.innerHTML.indexOf('Code visualized') > -1) { 
+           if (faking_cpp) {
+              elt.parentElement.parentElement.removeChild(elt.parentElement);
+           }
+           else {
+              elt.setAttribute('href', 'http://cscircles.cemc.uwaterloo.ca/java_visualize/');
+              elt.innerHTML = 'Java Visualizer';
+           }
+        }
+     });
+
+     if (faking_cpp) {
+        $("#stackHeader").html('Variables');
+        $("#heapHeader").html('Memory');
+     }
+   
     var myViz = args.myViz;
     var curEntry = myViz.curTrace[myViz.curInstr];
     if (myViz.params.stdin && myViz.params.stdin != "") {
