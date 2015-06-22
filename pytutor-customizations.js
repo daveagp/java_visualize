@@ -1,7 +1,7 @@
 rightwardNudgeHack = false;
 
 // turning on does minor tweaks to make things look more like C++, see README
-faking_cpp = true;
+faking_cpp = false;
 // but allow overriding via URL
 
 // http://stackoverflow.com/questions/901115/
