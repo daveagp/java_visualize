@@ -1,4 +1,4 @@
-THE "C++ VISUALZER"
+THE "C++ VISUALIZER"
 
 This visualizer has been used to help teach a course on C++ by using a dirty
 hack: we show the student a version of the code that looks like C++, but 
