@@ -50,8 +50,7 @@ so here is another server you can use:
  http://cscircles.cemc.uwaterloo.ca/java_visualize/?faking_cpp=true
 
 Once there, enter your fake visualization. Once you're happy with it,
-you can see the "Embed this:" field. Copy that <iframe ...> and paste
-it into whatever html you like.
+copy the "Embeddable iframe:" field into whatever html you like.
 
 The ugly part of the workflow at the moment is editing a previously-created
 animation, which at this point requires editing or converting the URL-encoded
