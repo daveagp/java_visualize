@@ -1,0 +1,81 @@
+THE "C++ VISUALIZER"
+
+This visualizer has been used to help teach a course on C++ by using a dirty
+hack: we show the student a version of the code that looks like C++, but 
+a Java version of the code is actually what is being run and visualized. This
+suffices for most of what you would do in an intro course, including 
+control flow, arrays, recursion, OOP and linked lists.
+
+Since this is faked, it unfortunately doesn't make sense to allow students
+to edit the visualized code or for them to visualize their own code.
+
+The Java visualizer allows you do this by using the symbol //>< as follows:
+ {real Java code to visualize} //>< {fake C++ code to show to the student}
+For instance, go to http://cscircles.cemc.uwaterloo.ca/java_visualize/
+and type in the following:
+
+public class C { public static void main(String[] args) { //><int main() {
+   int x = 2;
+   int y = 2;
+   System.out.println(x+y);//><   cout << x+y << endl;
+}} //><}
+
+So you're basically writing 2 parallel programs, though lines that are
+identical in Java and C++ only need to be typed in once (e.g. "int x = 2;").
+
+At the moment, I've only deployed these fake visualizations with the embedded
+iframe version of the Python Tutor/Java Visualizer, which sort of makes sense
+because in this interface it's not editable, but also because our use case
+was embedding in course notes. The notes are here:
+ http://bits.usc.edu/cs103-s15/schedule/
+E.g., see this lecture's notes:
+ http://bits.usc.edu/cs103-s15/control/
+
+USAGE GUIDE
+
+You can either do this with your own server, or use a pre-existing one.
+
+Installing the Java Visualizer (see the README) automatically gives you
+the ability to do fake C++ visualizations. 
+
+There is a configuration variable called "faking_cpp" in 
+pytutor-customizations.js that eases the workflow for creating fake C++
+visualizations and makes some superficial changes to some labels.
+
+For instance, you can use this mirror where it's enabled by default:
+ http://bits.usc.edu/java_visualize/
+
+You also can override it by setting the http query variable faking_cpp, 
+so here is another server you can use:
+ http://cscircles.cemc.uwaterloo.ca/java_visualize/?faking_cpp=true
+
+Once there, enter your fake visualization. Once you're happy with it,
+copy the "Embeddable iframe:" field into whatever html you like.
+
+The ugly part of the workflow at the moment is editing a previously-created
+animation, which at this point requires editing or converting the URL-encoded
+version of the code. If you find this a big hassle, feel free to get in
+touch, or please send a pull request if you create a easy solution.
+
+NOTES
+
+Right now, the backend is agnostic as to whether it's visualizing true
+Java or faking C++. It would be better to fix this, e.g. so main returns 0
+and not VOID when we're faking C++.
+
+To see how this is implemented, search for 'fakify' in the java_jail repo.
+
+There's nothing special about C++ aside from the semantics and code flow
+being similar to Java; you could use this to fake-visualize any
+other language depending on how much work you're willing to put into writing
+2 parallel versions of the code.
+
+The Java/C++ embedded visualizer is using a modification of an old version
+of the embedded visualizer code. See embed/README for details. It would
+be nice to bring it up to date.
+
+A few educators and students that I have talked to have ideas and partial
+implementations of a "real" C++ visualizer, either by piping through gdb,
+or by using LLDB's API, or by doing something like valgrind. Please email
+me if you have made progress in this direction or if you want to touch
+base with others who are interested.

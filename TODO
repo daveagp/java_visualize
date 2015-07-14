@@ -8,6 +8,25 @@ figure out suspend/resume (e.g. for exception handling, data structures)
 
 allow selective visualization of contents of some built-in classes
 
+(suggested by Jeff Kang)
+When the slider has focus, press "j" (for jump), or another key, and follow that with a number.
+That would teleport you to the line of code that corresponds to that number.
+The difficulty is that multiple Frames-Objects pair images can belong to 1 line of code.
+If it's possible, perhaps show a list of all the pairs.
+The pairs could be shortened, compacted, and/or summarized to fit on the screen.
+Maybe it just lists the step numbers that correspond to that line number.
+Then, a person would be allowed to choose the Frames-Objects pair to skip to.
+Or, just pick the earliest Frames-Objects pair that will appear from the current step.
+That is, "what's the next step that will take me to this line of code?".
+
+
+(suggested by James Vanderhyde)
+improve flow when a return statement is followed by an assignment of that value:
+the value disappears and then comes back
+
+(suggested by Brad Vander Zanden)
+If a statement modifies the value of a variable/object, it would be helpful to highlight that value/object so that the student can instantly see what has been modified.
+
 inner classes, local classes, anonymous classes, lambdas, captured final variables, this$ ...
 - right now we show things exactly from JDWP, like Eclipse or NetBeans
 - no way to recover all lambda arg names given current bytecode

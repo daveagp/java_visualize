@@ -67,6 +67,8 @@ $safeexec_args = array(
   "nproc" => "50",    // max 50 processes
   "nfile" => "50",    // up to 50 file handles. 
                       // depends on number of files you are including!
+
+  "share_newnet" => "", // don't unshare network: 2 VMs talk over port
 );
 
 // allow arbitrary overrides
@@ -80,7 +82,7 @@ $safeexec_args = config_get("safeexec_args_override", $safeexec_args);
 // https://github.com/daveagp/java_jail 
 $java_in_jail = config_get("java_in_jail", "/java/bin/java");
 $java_args = array(
-  "Xmx" => "128M", // 128 mb per VM
+  "Xmx" => "512M", // 128 mb per VM
   "cp" =>  '/cp/:/cp/javax.json-1.0.jar:/java/lib/tools.jar:/cp/visualizer-stdlib'
 );
 

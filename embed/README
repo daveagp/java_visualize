@@ -1,0 +1,17 @@
+Note! This repository is using a crufty old version of the visualizer
+for embedding.
+
+The reason for this is laziness, but specifically because there are
+features of the Java Visualizer not yet supported on the main branch and
+at pythontutor.com (as of the date of writing), in particular
+command-line arguments and standard input.
+
+As a result, this subdirectory has out-of-date copies from an old
+version of the Python Tutor, which were then manually changed to be
+Java-friendly. 
+
+For reference, the files in this directry were taken from 
+https://github.com/cemc/cscircles-wp-content
+in the directory pybox/OnlinePythonTutor3-cemc
+and then modified.
+
