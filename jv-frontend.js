@@ -560,7 +560,3 @@ var setOptions = function(lookup_function) {
   }
 };
 
-// fix bug where suppressed lines confuse the ui when they are executed
-String.prototype.rtrim = function() {
-  return this;
-};

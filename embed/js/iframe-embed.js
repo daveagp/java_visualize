@@ -89,6 +89,7 @@ $(document).ready(function() {
     
   if (resizeContainer) {
       function findContainer() {
+        try {
           var ifs = window.top.document.getElementsByTagName("iframe");
           for(var i = 0, len = ifs.length; i < len; i++)  {
               var f = ifs[i];
@@ -97,6 +98,9 @@ $(document).ready(function() {
                   return f;
               }
           }
+        } catch (e) {
+          // ignore SecurityError
+        }
       }
       
       var container = findContainer();
