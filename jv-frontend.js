@@ -560,3 +560,9 @@ var setOptions = function(lookup_function) {
   }
 };
 
+var oldSE = structurallyEquivalent;
+var structurallyEquivalent = function(obj1, obj2) {
+  if ($('#verticalLists').is(':checked')) return false;
+  return oldSE(obj1, obj2);
+}
+
