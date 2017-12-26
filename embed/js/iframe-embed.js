@@ -149,7 +149,7 @@ $(document).ready(function() {
                               $("#stdinShow").html(serverReply.stdin);
                           }*/
                           if ($.bbq.getState('rightStdout')) {
-                              $("#progOutputs").appendTo("#dataViz");
+                              $("#progOutputs").prependTo("#dataViz");
                           };
                           if (resizeContainer)
                               resizeContainerNow();

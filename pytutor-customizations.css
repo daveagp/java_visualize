@@ -73,3 +73,7 @@ div.ExecutionVisualizer .highlight-cur {
 .symbolic {
   font-size: 18pt;
 }
+
+#vizDiv.embedded #progOutputs {
+  margin: 0 20px 10px 20px; width: 400px;
+}
