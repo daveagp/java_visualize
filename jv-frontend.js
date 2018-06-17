@@ -105,8 +105,9 @@ function setCodeMirrorVal(dat) {
     viz_options = JSON.parse(viz_options);
     setOptions(function(key){ return viz_options[key] });
   }
-  else
+  else {
     setOptions(function(key){ return undefined;});
+  }
   pyInputCodeMirror.setValue(dat.rtrim());
   $('#urlOutput,#embedCodeOutput').val('');
 
@@ -455,7 +456,7 @@ $(document).ready(function() {
 
   $('#genUrlBtn').bind('click', function() {
     var myArgs = {code: pyInputCodeMirror.getValue(),
-                  mode: appMode                  
+                  mode: appMode
                   /*
                   , cumulative: $('#cumulativeModeSelector').val(),
                   heapPrimitives: $('#heapPrimitivesSelector').val(),
@@ -465,13 +466,15 @@ $(document).ready(function() {
                   py: $('#pythonVersionSelector').val()
                   */};
 
-    // the presence of the key is used, the value is not used
+    // Set these to a value which coerces to true
     if ($('#showStringsAsObjects').is(':checked'))
-      myArgs.showStringsAsObjects='';
+      myArgs.showStringsAsObjects=1;
     if ($('#showAllFields').is(':checked'))
-      myArgs.showAllFields='';
+      myArgs.showAllFields=1;
     if ($('#disableNesting').is(':checked'))
-      myArgs.disableNesting='';
+      myArgs.disableNesting=1;
+    if ($('#verticalLists').is(':checked'))
+      myArgs.verticalLists=1;
 
     if (getUserArgs().length > 0)
       myArgs.args = JSON.stringify(getUserArgs());
@@ -529,7 +532,7 @@ var setOptions = function(lookup_function) {
   }
 
   // parse options
-  var optionNames = ['showStringsAsObjects', 'showAllFields', 'disableNesting'];
+  var optionNames = ['showStringsAsObjects', 'showAllFields', 'disableNesting', 'verticalLists'];
   var someOption = false;
   for (var i=0; i<optionNames.length; i++) {
     var optionName = optionNames[i];
@@ -565,4 +568,3 @@ var structurallyEquivalent = function(obj1, obj2) {
   if ($('#verticalLists').is(':checked')) return false;
   return oldSE(obj1, obj2);
 }
-
