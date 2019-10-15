@@ -27,7 +27,7 @@
 
  "safeexec_wallclock_s": 15,
  "safeexec_cpu_s": 10,
- "safeexec_mem_k": 4000000,
+ "safeexec_mem_k": 8000000,
 
  "visualizer_args": {
    "MAX_STEPS": 512,
