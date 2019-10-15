@@ -55,8 +55,8 @@ $safeexec_args = array(
   // you may choose to tweak these important performance parameters
   "clock" => config_get("safeexec_wallclock_s", 15),
   "cpu" => config_get("safeexec_cpu_s", 10),
-  "mem" => config_get("safeexec_mem_k", 2000000),
-                      // use up to 2000000k ~ 2g of memory (YMMV)
+  "mem" => config_get("safeexec_mem_k", 8000000),
+                      // use up to 8000000k ~ 8g of memory (YMMV)
                       // counting both VMs and all overhead
                       // see java_jail/cp/traceprinter/MEMORY-NOTES
 
@@ -64,8 +64,8 @@ $safeexec_args = array(
 
   "exec_dir" => "/",  // execute in root of chroot
   "env_vars" => "''", // no env vars
-  "nproc" => "50",    // max 50 processes
-  "nfile" => "50",    // up to 50 file handles. 
+  "nproc" => "200",   // max 200 processes
+  "nfile" => "200",   // up to 200 file handles. 
                       // depends on number of files you are including!
 
   "share_newnet" => "", // don't unshare network: 2 VMs talk over port
